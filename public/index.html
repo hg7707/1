@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>决斗场 AI 教练智能体</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="side">
+        <div class="brand">
+          <div class="mark">忍</div>
+          <div>
+            <strong>决斗场教练</strong>
+            <span>对话智能体</span>
+          </div>
+        </div>
+        <nav>
+          <a href="#coach" class="active">教练对话</a>
+          <a href="#review">赛后复盘</a>
+          <a href="#history">最近记录</a>
+          <a href="#kb">知识库状态</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="hero">
+          <div>
+            <p>对话教练 · 知识库约束 · 个性化作业</p>
+            <h1>一个专门陪你练决斗场的 AI 教练</h1>
+          </div>
+          <div id="health" class="status">检查中</div>
+        </header>
+
+        <section id="coach" class="coach-grid">
+          <section class="panel chat-panel">
+            <div class="section-title">
+              <p>教练对话</p>
+              <h2>直接问：我这波该怎么打？</h2>
+            </div>
+            <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+            <form id="chat-form" class="chat-form">
+              <textarea
+                id="chat-input"
+                name="message"
+                placeholder="例如：我开局技能空了还想前压，经常被反打，下一局应该怎么改？"
+              ></textarea>
+              <button id="chat-submit" class="primary" type="submit">问教练</button>
+            </form>
+            <div class="quick-actions">
+              <button class="ghost chat-sample" data-message="我开局技能空放以后总想继续前压，怎么改？" type="button">问技能空放</button>
+              <button class="ghost chat-sample" data-message="我什么时候该交替身？替身后经常没有收益。" type="button">问替身</button>
+              <button class="ghost chat-sample" data-message="我有奥义但总是收不掉，对手替身还在怎么办？" type="button">问奥义</button>
+            </div>
+          </section>
+
+          <aside class="panel profile-panel">
+            <div class="section-title">
+              <p>玩家档案</p>
+              <h2>让教练按你的水平说人话</h2>
+            </div>
+            <div class="provider-box">
+              <strong>站点 AI 设置</strong>
+              <p id="public-provider-note" class="muted">公开网站会使用站长在服务器配置的模型，普通用户不用填写 API key。</p>
+              <label class="client-provider-field">
+                服务商
+                <select id="provider-select">
+                  <option value="local">本地预览</option>
+                  <option value="siliconflow">硅基流动</option>
+                </select>
+              </label>
+              <label class="client-provider-field">
+                硅基流动 API key
+                <input id="siliconflow-key" type="password" placeholder="sk-..." autocomplete="off" />
+              </label>
+              <label class="client-provider-field">
+                模型
+                <input id="siliconflow-model" value="deepseek-ai/DeepSeek-V3.2" list="siliconflow-models" />
+              </label>
+              <datalist id="siliconflow-models">
+                <option value="deepseek-ai/DeepSeek-V3.2"></option>
+                <option value="deepseek-ai/DeepSeek-R1"></option>
+                <option value="Qwen/Qwen3-32B"></option>
+                <option value="Qwen/Qwen2.5-72B-Instruct"></option>
+              </datalist>
+              <label class="client-provider-field">
+                接口地址
+                <input id="siliconflow-base-url" value="https://api.siliconflow.cn/v1" />
+              </label>
+              <div class="provider-actions">
+                <button id="save-provider" class="ghost client-provider-field" type="button">保存模型设置</button>
+                <button id="test-provider" class="ghost" type="button">测试站点模型</button>
+              </div>
+              <span id="provider-status">设置只保存在当前浏览器。</span>
+            </div>
+            <label>
+              当前水平
+              <select id="profile-level">
+                <option value="beginner">入门：先改机制和坏习惯</option>
+                <option value="intermediate" selected>中阶：重点看节奏和资源</option>
+                <option value="advanced">高阶：看 matchup 和细节</option>
+              </select>
+            </label>
+            <label>
+              当前段位
+              <input id="profile-rank" value="影级附近" />
+            </label>
+            <label>
+              常用忍者
+              <input id="profile-player" value="宇智波佐助" />
+            </label>
+            <label>
+              最近怕打的忍者
+              <input id="profile-enemy" value="漩涡鸣人" />
+            </label>
+            <div id="chat-evidence" class="evidence-box">
+              <strong>本轮依据</strong>
+              <span>还没有提问。</span>
+            </div>
+          </aside>
+        </section>
+
+        <section id="review" class="grid">
+          <form id="review-form" class="panel" autocomplete="off">
+            <div class="section-title">
+              <p>赛后复盘</p>
+              <h2>把一局输法拆成作业</h2>
+            </div>
+
+            <div class="quick-actions" aria-label="示例对局">
+              <button class="ghost demo-btn" data-demo="skill" type="button">技能空放示例</button>
+              <button class="ghost demo-btn" data-demo="sub" type="button">替身问题示例</button>
+              <button class="ghost demo-btn" data-demo="ult" type="button">奥义收尾示例</button>
+            </div>
+
+            <label>
+              当前水平
+              <select name="level">
+                <option value="beginner">入门：机制和习惯问题优先</option>
+                <option value="intermediate" selected>中阶：节奏和资源问题优先</option>
+                <option value="advanced">高阶：细节和 matchup 优先</option>
+              </select>
+            </label>
+
+            <div class="two">
+              <label>
+                当前段位
+                <input name="rank" value="影级附近" />
+              </label>
+              <label>
+                对局结果
+                <select name="result">
+                  <option>失败</option>
+                  <option>胜利但不稳定</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="two">
+              <label>
+                我方忍者
+                <input name="playerNinja" placeholder="例如：宇智波佐助" />
+              </label>
+              <label>
+                对手忍者
+                <input name="enemyNinja" placeholder="例如：漩涡鸣人" />
+              </label>
+            </div>
+
+            <label>
+              你觉得问题在哪里
+              <textarea name="selfDiagnosis">开局技能没中以后我还往前压，被对手反打。中盘替身后也没有打出收益。</textarea>
+            </label>
+
+            <div class="moments">
+              <div class="moment-head">
+                <strong>关键时间点</strong>
+                <button id="add-moment" type="button">添加</button>
+              </div>
+              <div id="moment-list">
+                <div class="moment-row">
+                  <input name="time" value="00:18" aria-label="时间" />
+                  <input name="description" value="技能空放后继续前压" aria-label="描述" />
+                </div>
+                <div class="moment-row">
+                  <input name="time" value="00:34" aria-label="时间" />
+                  <input name="description" value="低收益命中后直接替身" aria-label="描述" />
+                </div>
+              </div>
+            </div>
+
+            <button id="submit" class="primary" type="submit">生成复盘</button>
+          </form>
+
+          <section id="report" class="panel report">
+            <div class="section-title">
+              <p>复盘报告</p>
+              <h2>报告会显示依据，不足就明说</h2>
+            </div>
+            <div id="empty" class="empty">填写左侧信息后生成第一份复盘。</div>
+            <div id="report-content" hidden></div>
+          </section>
+        </section>
+
+        <section id="history" class="panel history-panel">
+          <div class="section-title">
+            <p>最近记录</p>
+            <h2>让你看到连续复盘后的产品形态</h2>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+
+        <section id="kb" class="panel kb">
+          <div class="section-title">
+            <p>知识库状态</p>
+            <h2>你后续只需要维护这些 JSON 文件</h2>
+          </div>
+          <div id="kb-summary" class="kb-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

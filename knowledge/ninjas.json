@@ -1,0 +1,91 @@
+[
+  {
+    "id": "ninja_template_001",
+    "title": "忍者条目模板",
+    "template": true,
+    "ninja": "示例忍者",
+    "level": "beginner",
+    "tags": ["模板"],
+    "summary": "把这里替换成具体忍者的强势距离、起手方式、弱点和常见处理。"
+  },
+  {
+    "id": "ninja_uchiha_sasuke_001",
+    "title": "宇智波佐助基础打法",
+    "ninja": "宇智波佐助",
+    "level": "beginner",
+    "tags": ["佐助", "起手", "技能空放", "拉扯"],
+    "summary": "佐助类忍者通常适合用中距离技能试探，技能空后不要继续贴脸硬抢，应先拉开距离等冷却。"
+  },
+  {
+    "id": "ninja_uzumaki_naruto_001",
+    "title": "漩涡鸣人基础打法",
+    "ninja": "漩涡鸣人",
+    "level": "beginner",
+    "tags": ["鸣人", "连招", "压场", "替身"],
+    "summary": "鸣人类忍者演示条目：命中后优先稳定连段，对手替身在时不要只按固定连招打到底。"
+  },
+  {
+    "id": "ninja_haruno_sakura_001",
+    "title": "春野樱基础打法",
+    "ninja": "春野樱",
+    "level": "beginner",
+    "tags": ["小樱", "近身", "防守", "距离"],
+    "summary": "小樱类近身忍者演示条目：需要更重视入场距离，没逼出对手关键技能前不要直线硬进。"
+  },
+  {
+    "id": "ninja_hatake_kakashi_001",
+    "title": "旗木卡卡西节奏",
+    "ninja": "旗木卡卡西",
+    "level": "intermediate",
+    "tags": ["卡卡西", "中立", "起手", "骗技能"],
+    "summary": "卡卡西类忍者演示条目：适合通过中立试探和技能节奏换先手，关键技能空后应马上重置距离。"
+  },
+  {
+    "id": "ninja_uchiha_itachi_001",
+    "title": "宇智波鼬控场",
+    "ninja": "宇智波鼬",
+    "level": "intermediate",
+    "tags": ["鼬", "控场", "距离", "奥义"],
+    "summary": "鼬类忍者演示条目：更适合控制距离和节奏，不要在对手替身仍在时急着交高资源收尾。"
+  },
+  {
+    "id": "ninja_gaara_001",
+    "title": "我爱罗防守节奏",
+    "ninja": "我爱罗",
+    "level": "intermediate",
+    "tags": ["我爱罗", "防守", "控场", "反打"],
+    "summary": "我爱罗类忍者演示条目：可以用控场限制对手进攻，但资源交完后要降低压场强度。"
+  },
+  {
+    "id": "ninja_minato_001",
+    "title": "波风水门机动性",
+    "ninja": "波风水门",
+    "level": "advanced",
+    "tags": ["水门", "机动", "骗替", "节奏"],
+    "summary": "水门类高机动忍者演示条目：优势在于节奏变化和落点变化，但如果路线固定，也会被提前预判。"
+  },
+  {
+    "id": "ninja_madara_001",
+    "title": "宇智波斑压制",
+    "ninja": "宇智波斑",
+    "level": "advanced",
+    "tags": ["斑", "压制", "资源交换", "墙角"],
+    "summary": "斑类高压制忍者演示条目：压场收益高，但要关注自己资源是否足够维持压制。"
+  },
+  {
+    "id": "ninja_pain_001",
+    "title": "佩恩控距",
+    "ninja": "佩恩",
+    "level": "intermediate",
+    "tags": ["佩恩", "控距", "反打", "中立"],
+    "summary": "佩恩类忍者演示条目：中距离威胁强，适合惩罚对手直线进攻，自己空技能后也要避免被反抢。"
+  },
+  {
+    "id": "ninja_obito_001",
+    "title": "宇智波带土节奏变化",
+    "ninja": "宇智波带土",
+    "level": "advanced",
+    "tags": ["带土", "节奏", "骗技能", "替身"],
+    "summary": "带土类忍者演示条目：适合打节奏差和骗反应，复盘时重点看替身后是否真的拿到收益。"
+  }
+]

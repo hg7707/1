@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>决斗场 AI 复盘教练原型</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark">忍</div>
+          <div>
+            <strong>决斗场教练</strong>
+            <span>AI 复盘工作台</span>
+          </div>
+        </div>
+        <nav>
+          <a class="active" href="#dashboard">工作台</a>
+          <a href="#submit">提交对局</a>
+          <a href="#report">复盘报告</a>
+          <a href="#training">训练作业</a>
+          <a href="#knowledge">知识库</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">赛后复盘 · 知识库约束 · 个性化训练</p>
+            <h1>把一局输法拆成下一局能执行的改法</h1>
+          </div>
+          <button class="primary-action" type="button">新建复盘</button>
+        </header>
+
+        <section id="dashboard" class="dashboard-grid" aria-label="工作台概览">
+          <article class="metric-panel">
+            <span>最近 7 天主要问题</span>
+            <strong>技能空放后继续前压</strong>
+            <p>出现 9 次，集中在开局 30 秒内。</p>
+          </article>
+          <article class="metric-panel">
+            <span>当前训练目标</span>
+            <strong>替身后反打判断</strong>
+            <p>目标：5 局内减少低收益替身。</p>
+          </article>
+          <article class="metric-panel">
+            <span>知识库覆盖</span>
+            <strong>124 条</strong>
+            <p>机制、错误类型、训练模板已可用。</p>
+          </article>
+        </section>
+
+        <section class="workspace" aria-label="主要工作区">
+          <div id="submit" class="panel intake-panel">
+            <div class="section-heading">
+              <p class="eyebrow">提交对局</p>
+              <h2>先用低门槛方式验证复盘价值</h2>
+            </div>
+
+            <form class="match-form">
+              <label>
+                当前段位
+                <select>
+                  <option>暗部 / 影级附近</option>
+                  <option>上忍 / 暗部</option>
+                  <option>影级以上</option>
+                </select>
+              </label>
+              <label>
+                我方忍者
+                <input value="常用忍者 A" />
+              </label>
+              <label>
+                对手忍者
+                <input value="对手忍者 B" />
+              </label>
+              <label>
+                结果
+                <select>
+                  <option>失败</option>
+                  <option>胜利但过程不稳定</option>
+                </select>
+              </label>
+              <label class="wide">
+                你觉得输在哪里
+                <textarea>开局技能没中以后我还往前压，被对手反打两次。中盘替身后也没有打出收益。</textarea>
+              </label>
+            </form>
+
+            <div class="battle-visual" aria-label="对局可视化示意">
+              <div class="arena">
+                <div class="fighter player">我方</div>
+                <div class="danger-zone"></div>
+                <div class="fighter enemy">对手</div>
+              </div>
+              <div class="timeline">
+                <button class="time-chip active" data-report="whiff" type="button">00:18 技能空放</button>
+                <button class="time-chip" data-report="sub" type="button">00:34 替身过早</button>
+                <button class="time-chip" data-report="ult" type="button">01:12 奥义收益低</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="report" class="panel report-panel">
+            <div class="section-heading">
+              <p class="eyebrow">复盘报告</p>
+              <h2>AI 只在知识库范围内给建议</h2>
+            </div>
+
+            <article class="finding">
+              <div>
+                <span class="severity">核心问题</span>
+                <h3 id="finding-title">技能空放后仍然继续前压</h3>
+              </div>
+              <p id="finding-body">你在对手可反打距离内释放技能未命中，随后继续向前争夺先手。此时你进入技能真空期，对手更容易抓后摇或反压。</p>
+            </article>
+
+            <div class="recommendation">
+              <h3>推荐处理</h3>
+              <p id="recommendation-text">技能没有命中时，第一优先级是拉开距离或用安全位移重置局面，不建议立刻追加第二个关键技能。</p>
+            </div>
+
+            <div class="evidence-list">
+              <h3>知识依据</h3>
+              <ul id="evidence">
+                <li>错误类型：无保护技能空放</li>
+                <li>机制知识：技能真空期处理</li>
+                <li>通用原则：先确认收益，再扩大进攻</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="lower-grid">
+          <div id="training" class="panel">
+            <div class="section-heading">
+              <p class="eyebrow">训练作业</p>
+              <h2>今天只练一个动作</h2>
+            </div>
+            <ol class="task-list">
+              <li>
+                <strong>5 局专项记录</strong>
+                <span>每次技能空放后，只记录自己是否后撤重置。</span>
+              </li>
+              <li>
+                <strong>复盘提问</strong>
+                <span>这次前压是确认命中，还是只是习惯性追击？</span>
+              </li>
+              <li>
+                <strong>通过标准</strong>
+                <span>连续 3 局减少无保护追加技能。</span>
+              </li>
+            </ol>
+          </div>
+
+          <div id="knowledge" class="panel">
+            <div class="section-heading">
+              <p class="eyebrow">知识库后台</p>
+              <h2>让 AI 有边界地回答</h2>
+            </div>
+            <div class="knowledge-table" role="table" aria-label="知识库条目">
+              <div role="row">
+                <span role="cell">机制</span>
+                <strong role="cell">替身使用原则</strong>
+                <em role="cell">已审核</em>
+              </div>
+              <div role="row">
+                <span role="cell">错误</span>
+                <strong role="cell">无保护技能空放</strong>
+                <em role="cell">已审核</em>
+              </div>
+              <div role="row">
+                <span role="cell">训练</span>
+                <strong role="cell">技能确认专项</strong>
+                <em role="cell">已审核</em>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

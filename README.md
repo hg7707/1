@@ -19,6 +19,7 @@ npm start
 ```
 
 打开：
+
 ```text
 http://localhost:3000
 ```
@@ -26,6 +27,7 @@ http://localhost:3000
 ## 公开网站模式
 
 公开部署时，不要让用户在前端填写 API key。站长应该在服务器环境变量里配置：
+
 ```text
 SILICONFLOW_API_KEY=你的硅基流动 API key
 SILICONFLOW_MODEL=deepseek-ai/DeepSeek-V3.2

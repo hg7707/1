@@ -1,0 +1,107 @@
+[
+  {
+    "id": "training_skill_reset_001",
+    "title": "技能空放后撤训练",
+    "targetLevel": "beginner",
+    "tags": ["技能空放", "后撤", "拉扯"],
+    "content": "接下来 5 局只练一个动作：关键技能没有命中时，立刻后撤或重置距离，不追加第二个关键技能。通过标准：至少 3 局能明确减少无保护前压。"
+  },
+  {
+    "id": "training_substitution_log_001",
+    "title": "替身原因记录",
+    "targetLevel": "beginner",
+    "tags": ["替身", "复盘", "资源"],
+    "content": "接下来 5 局记录每一次替身的原因：是逃生、反打、打断高收益，还是只是紧张。通过标准：低收益命中后立刻替身的次数下降。"
+  },
+  {
+    "id": "training_confirm_001",
+    "title": "命中确认专项",
+    "targetLevel": "intermediate",
+    "tags": ["确认", "追击", "奥义"],
+    "content": "接下来 5 局只统计关键资源是否建立在命中确认上。通过标准：奥义和关键追击的空放次数下降。"
+  },
+  {
+    "id": "training_opening_001",
+    "title": "开局观察训练",
+    "targetLevel": "beginner",
+    "tags": ["开局", "观察", "起手"],
+    "content": "接下来 5 局开局前 2 秒不主动交关键技能，只观察对手是前压、后撤还是直接起手。通过标准：开局被反打次数下降。"
+  },
+  {
+    "id": "training_distance_001",
+    "title": "危险距离标记",
+    "targetLevel": "beginner",
+    "tags": ["距离", "走位", "拉扯"],
+    "content": "接下来 5 局每次被起手后回想自己站在什么距离。通过标准：能说出对手最常命中的距离，并主动避开。"
+  },
+  {
+    "id": "training_bait_sub_001",
+    "title": "骗替身专项",
+    "targetLevel": "intermediate",
+    "tags": ["骗替", "替身", "连招"],
+    "content": "接下来 5 局只练一次命中后的停顿或留技能，不强求打满。通过标准：至少 2 次让对手替身后没有稳定反打。"
+  },
+  {
+    "id": "training_cooldown_001",
+    "title": "只记一个关键冷却",
+    "targetLevel": "intermediate",
+    "tags": ["冷却", "技能", "观察"],
+    "content": "接下来 5 局只记对手最关键的起手技能。它空了就尝试压，它快好了就降低前压。通过标准：能在复盘里说出 3 次冷却窗口。"
+  },
+  {
+    "id": "training_defense_layer_001",
+    "title": "防守资源分层",
+    "targetLevel": "beginner",
+    "tags": ["防守", "替身", "通灵", "秘卷"],
+    "content": "接下来 5 局被压时禁止连续交两个防守资源。每次只交一个，并记录它换来了什么。通过标准：防守资源乱交次数下降。"
+  },
+  {
+    "id": "training_ultimate_001",
+    "title": "奥义确认训练",
+    "targetLevel": "intermediate",
+    "tags": ["奥义", "确认", "收尾"],
+    "content": "接下来 5 局奥义只在命中确认、对手无替身或墙角限制时使用。通过标准：奥义空放次数下降。"
+  },
+  {
+    "id": "training_combo_stable_001",
+    "title": "稳定连招优先",
+    "targetLevel": "beginner",
+    "tags": ["连招", "稳定", "训练"],
+    "content": "训练场先练 20 次最稳连招，不追求最高伤害。通过标准：连续 10 次不掉连，再进入实战。"
+  },
+  {
+    "id": "training_pressure_001",
+    "title": "压场前资源检查",
+    "targetLevel": "intermediate",
+    "tags": ["压场", "资源", "墙角"],
+    "content": "接下来 5 局每次压场前问自己：我还有技能、秘卷、通灵或替身吗？通过标准：资源不足贴脸次数下降。"
+  },
+  {
+    "id": "training_pattern_001",
+    "title": "进攻路线变化",
+    "targetLevel": "intermediate",
+    "tags": ["习惯", "路线", "起手"],
+    "content": "接下来 5 局每局至少换一次起手路线：前压、后撤、停顿、秘卷开路中选一种。通过标准：同一开局动作连续出现次数下降。"
+  },
+  {
+    "id": "training_review_one_001",
+    "title": "单点复盘",
+    "targetLevel": "beginner",
+    "tags": ["复盘", "目标", "作业"],
+    "content": "每局只复盘一个问题，不同时改三件事。通过标准：复盘结论能浓缩成一句下一局提醒。"
+  },
+  {
+    "id": "training_summon_001",
+    "title": "通灵用途记录",
+    "targetLevel": "intermediate",
+    "tags": ["通灵", "保护", "反打"],
+    "content": "接下来 5 局记录每次通灵用途：起手、保护、反打、拖冷却。通过标准：无目的通灵次数下降。"
+  },
+  {
+    "id": "training_scroll_001",
+    "title": "秘卷目的训练",
+    "targetLevel": "beginner",
+    "tags": ["秘卷", "目的", "防守"],
+    "content": "接下来 5 局秘卷释放前必须有明确目的。通过标准：能说清每次秘卷换来了位置、资源还是起手。"
+  }
+]

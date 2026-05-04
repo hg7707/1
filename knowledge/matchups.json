@@ -1,0 +1,102 @@
+[
+  {
+    "id": "matchup_template_001",
+    "title": "对局条目模板",
+    "template": true,
+    "playerNinja": "我方忍者",
+    "enemyNinja": "对手忍者",
+    "level": "intermediate",
+    "tags": ["模板"],
+    "summary": "把这里替换成某个具体 matchup 的关键距离、不能乱交的技能、推荐争夺节奏。"
+  },
+  {
+    "id": "matchup_sasuke_vs_naruto_001",
+    "title": "宇智波佐助打漩涡鸣人",
+    "playerNinja": "宇智波佐助",
+    "enemyNinja": "漩涡鸣人",
+    "level": "beginner",
+    "tags": ["佐助", "鸣人", "距离", "技能空放"],
+    "summary": "演示对局：佐助应避免在技能空后继续站近，鸣人类对手容易抓近身混乱。优先中距离试探和后撤重置。"
+  },
+  {
+    "id": "matchup_naruto_vs_sasuke_001",
+    "title": "漩涡鸣人打宇智波佐助",
+    "playerNinja": "漩涡鸣人",
+    "enemyNinja": "宇智波佐助",
+    "level": "beginner",
+    "tags": ["鸣人", "佐助", "起手", "替身"],
+    "summary": "演示对局：鸣人命中后要先确认佐助替身状态，对手替身在时不要固定连招打到底。"
+  },
+  {
+    "id": "matchup_kakashi_vs_itachi_001",
+    "title": "旗木卡卡西打宇智波鼬",
+    "playerNinja": "旗木卡卡西",
+    "enemyNinja": "宇智波鼬",
+    "level": "intermediate",
+    "tags": ["卡卡西", "鼬", "中立", "控场"],
+    "summary": "演示对局：卡卡西要注意不要在鼬的控场距离里犹豫，关键技能空后应直接撤出危险距离。"
+  },
+  {
+    "id": "matchup_itachi_vs_kakashi_001",
+    "title": "宇智波鼬打旗木卡卡西",
+    "playerNinja": "宇智波鼬",
+    "enemyNinja": "旗木卡卡西",
+    "level": "intermediate",
+    "tags": ["鼬", "卡卡西", "控距", "奥义"],
+    "summary": "演示对局：鼬更适合控距和逼技能，不要在卡卡西仍有反打资源时急着交高资源。"
+  },
+  {
+    "id": "matchup_gaara_vs_minato_001",
+    "title": "我爱罗打波风水门",
+    "playerNinja": "我爱罗",
+    "enemyNinja": "波风水门",
+    "level": "advanced",
+    "tags": ["我爱罗", "水门", "控场", "机动"],
+    "summary": "演示对局：我爱罗需要用控场限制水门机动，不要盲目追落点。水门位移后先判断资源再反打。"
+  },
+  {
+    "id": "matchup_minato_vs_gaara_001",
+    "title": "波风水门打我爱罗",
+    "playerNinja": "波风水门",
+    "enemyNinja": "我爱罗",
+    "level": "advanced",
+    "tags": ["水门", "我爱罗", "机动", "骗技能"],
+    "summary": "演示对局：水门应利用机动骗出控场技能，避免在我爱罗资源完整时直线硬进。"
+  },
+  {
+    "id": "matchup_madara_vs_pain_001",
+    "title": "宇智波斑打佩恩",
+    "playerNinja": "宇智波斑",
+    "enemyNinja": "佩恩",
+    "level": "advanced",
+    "tags": ["斑", "佩恩", "压场", "中立"],
+    "summary": "演示对局：斑的压制要等佩恩关键反打技能交出后再扩大，不要在中立阶段无保护硬压。"
+  },
+  {
+    "id": "matchup_pain_vs_madara_001",
+    "title": "佩恩打宇智波斑",
+    "playerNinja": "佩恩",
+    "enemyNinja": "宇智波斑",
+    "level": "advanced",
+    "tags": ["佩恩", "斑", "反打", "距离"],
+    "summary": "演示对局：佩恩应保持反打距离，等斑压场资源减少后再争夺先手，不要提前交完防守资源。"
+  },
+  {
+    "id": "matchup_obito_vs_itachi_001",
+    "title": "宇智波带土打宇智波鼬",
+    "playerNinja": "宇智波带土",
+    "enemyNinja": "宇智波鼬",
+    "level": "advanced",
+    "tags": ["带土", "鼬", "节奏", "骗技能"],
+    "summary": "演示对局：带土需要通过节奏变化骗出鼬的控场技能，不能用固定路线反复进场。"
+  },
+  {
+    "id": "matchup_itachi_vs_obito_001",
+    "title": "宇智波鼬打宇智波带土",
+    "playerNinja": "宇智波鼬",
+    "enemyNinja": "宇智波带土",
+    "level": "advanced",
+    "tags": ["鼬", "带土", "控场", "落点"],
+    "summary": "演示对局：鼬要优先限制带土落点，别在带土替身或位移资源完整时强行收尾。"
+  }
+]

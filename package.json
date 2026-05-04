@@ -1,0 +1,19 @@
+{
+  "name": "naruto-duel-coach",
+  "version": "0.2.0",
+  "description": "Naruto Mobile duel arena AI coach web app",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check src/knowledge.js && node --check src/retriever.js && node --check src/report.js && node --check src/ai.js && node --check src/chat.js && node --check public/app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "openai": "^6.10.0"
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "mechanic_substitution_001",
+    "title": "替身使用原则",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": ["替身", "资源", "反打"],
+    "content": "替身通常用于打断对方稳定收益，或在替身后能拉开距离、反打、重置局面时使用。低伤害试探命中后立刻替身，往往会让后续回合更被动。"
+  },
+  {
+    "id": "mechanic_cooldown_001",
+    "title": "技能真空期处理",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": ["技能空放", "冷却", "后撤", "拉扯"],
+    "content": "关键技能未命中后，玩家会进入技能真空期。此时优先拉开距离、规避反打、等待冷却，不应继续用身体硬抢先手。"
+  },
+  {
+    "id": "mechanic_confirm_001",
+    "title": "确认收益后扩大进攻",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["确认", "起手", "追击", "奥义"],
+    "content": "高资源技能、奥义、关键追击应尽量建立在命中确认、对手替身不可用、或对手位置受限的前提下。"
+  },
+  {
+    "id": "mechanic_distance_001",
+    "title": "距离管理",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": ["距离", "走位", "起手", "拉扯"],
+    "content": "距离决定双方技能的有效威胁。没有起手把握时，不要一直站在对手技能刚好能打到的位置，可以用前后微动诱导对手先交技能。"
+  },
+  {
+    "id": "mechanic_neutral_001",
+    "title": "中立回合争夺",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["中立", "试探", "骗技能", "节奏"],
+    "content": "中立回合的目标不是立刻打满伤害，而是用走位、通灵、秘卷或低风险技能换取对手关键资源，再进入更确定的进攻回合。"
+  },
+  {
+    "id": "mechanic_pressure_001",
+    "title": "压场与撤退",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["压场", "墙角", "撤退", "反压"],
+    "content": "压场要建立在技能、替身、通灵或位置优势上。资源不足时继续压场，容易从进攻方变成被反打方。"
+  },
+  {
+    "id": "mechanic_ultimate_001",
+    "title": "奥义点管理",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["奥义", "奥义点", "收尾", "资源"],
+    "content": "奥义是高价值资源。更稳的使用方式是用于确认收尾、惩罚大后摇、或在对手替身不可用时扩大收益。"
+  },
+  {
+    "id": "mechanic_summon_001",
+    "title": "通灵用于保护节奏",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["通灵", "保护", "反打", "节奏"],
+    "content": "通灵不只用于起手，也可以用于保护关键技能真空期、打断对手反压、或在替身后建立安全距离。"
+  },
+  {
+    "id": "mechanic_secret_scroll_001",
+    "title": "秘卷的回合价值",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["秘卷", "起手", "防守", "控场"],
+    "content": "秘卷应服务于当前忍者的短板。缺起手就用来创造起手机会，怕被压就用来防守和重置，不要无目的地开局乱交。"
+  },
+  {
+    "id": "mechanic_hit_confirm_001",
+    "title": "命中确认",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": ["命中确认", "确认", "连招", "追击"],
+    "content": "命中确认指先判断技能是否确实打到，再决定是否追加后续资源。没有确认就追击，会让连招变成赌博。"
+  },
+  {
+    "id": "mechanic_bait_sub_001",
+    "title": "骗替身",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["骗替", "替身", "连招", "节奏"],
+    "content": "骗替身的核心是让对手以为你要继续稳定连段，实际保留后续资源准备抓替身后的落点或反应。"
+  },
+  {
+    "id": "mechanic_anti_air_001",
+    "title": "浮空与落地保护",
+    "level": "advanced",
+    "category": "mechanic",
+    "tags": ["浮空", "保护", "落地", "连招"],
+    "content": "长时间连段后要注意保护和落地节奏。继续追求高伤害之前，应判断对手是否会快速落地、替身或进入保护。"
+  },
+  {
+    "id": "mechanic_corner_001",
+    "title": "墙角收益",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": ["墙角", "压场", "连招", "走位"],
+    "content": "墙角能限制对手位移和走位，但只有在自己有资源继续压制时才是优势。没技能时站太近反而容易被反打。"
+  },
+  {
+    "id": "mechanic_start_001",
+    "title": "开局不要固定套路",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": ["开局", "起手", "习惯", "预判"],
+    "content": "开局如果每次都用同一个技能或路线，会很快被对手预判。可以在前两秒先观察对手起手习惯，再决定抢先手还是拉扯。"
+  },
+  {
+    "id": "mechanic_trade_001",
+    "title": "资源交换判断",
+    "level": "advanced",
+    "category": "mechanic",
+    "tags": ["资源交换", "血量", "替身", "奥义"],
+    "content": "不是所有命中都值得追。判断一次操作是否赚，要看血量、替身、奥义点、通灵秘卷和位置是否共同变好。"
+  }
+]

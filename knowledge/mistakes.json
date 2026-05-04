@@ -1,0 +1,192 @@
+[
+  {
+    "id": "mistake_skill_whiff_001",
+    "title": "无保护技能空放",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["技能空放", "前压", "后摇", "反打"],
+    "symptom": "玩家在对手可反打距离内释放技能但未命中。",
+    "risk": "进入技能真空期，被对手抓后摇或反压。",
+    "content": "如果技能没有命中，第一优先级是重置距离。继续前压通常是在用无资源状态和对手交换，风险偏高。"
+  },
+  {
+    "id": "mistake_substitution_early_001",
+    "title": "低收益命中后过早替身",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["替身", "资源", "低收益"],
+    "symptom": "对手只是试探命中，玩家立刻交替身。",
+    "risk": "后续高伤害回合没有替身，容易被稳定压制。",
+    "content": "替身要看对方能否继续稳定收益，以及自己替身后是否能反打或逃生。没有收益的替身只是提前交资源。"
+  },
+  {
+    "id": "mistake_ultimate_low_confirm_001",
+    "title": "奥义没有命中确认",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["奥义", "确认", "收尾", "资源"],
+    "symptom": "玩家在对手仍有规避空间时直接释放奥义。",
+    "risk": "高资源换低收益，丢失后续压制机会。",
+    "content": "奥义更适合在命中确认、对手替身不可用、或位置被限制时使用。抢收尾失败往往会直接丢掉节奏。"
+  },
+  {
+    "id": "mistake_start_rush_001",
+    "title": "开局无信息硬抢",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["开局", "起手", "硬抢", "预判"],
+    "symptom": "每局开局都立刻用同一个起手技能。",
+    "risk": "被对手提前预判，开局直接进入劣势。",
+    "content": "开局硬抢不是不能用，但如果形成固定习惯，就会被对手反制。更稳的做法是先看对手路线和技能习惯。"
+  },
+  {
+    "id": "mistake_no_bait_sub_001",
+    "title": "不会骗替身",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["骗替", "替身", "连招", "追击"],
+    "symptom": "每次命中都按固定连招打到底。",
+    "risk": "对手很容易在固定点替身反打。",
+    "content": "对手替身还在时，不要只想着打满伤害。可以在连段中留技能、停顿、走位，准备抓替身后的动作。"
+  },
+  {
+    "id": "mistake_chase_after_sub_001",
+    "title": "对手替身后盲目追击",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["替身", "追击", "反打", "落点"],
+    "symptom": "对手替身后玩家立刻朝前追，没判断落点和资源。",
+    "risk": "追击方向错误或被对手替身后的技能反打。",
+    "content": "对手替身后先判断自己是否有保护资源和安全距离。没把握时，重置距离比硬追更稳。"
+  },
+  {
+    "id": "mistake_over_pressure_001",
+    "title": "资源不足仍然压场",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["压场", "资源", "墙角", "反压"],
+    "symptom": "技能、秘卷或通灵都不占优时仍站在对手脸上。",
+    "risk": "被对手抓到技能真空期，压场变成送节奏。",
+    "content": "压场要看自己手里还有什么。没有资源时，压场动作应更短，优先保位置而不是强行起手。"
+  },
+  {
+    "id": "mistake_panic_defense_001",
+    "title": "防守时连续乱交资源",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["防守", "替身", "通灵", "秘卷", "紧张"],
+    "symptom": "被压后连续交替身、通灵或秘卷，但没有形成反打。",
+    "risk": "短时间交完所有防守资源，下一波更难处理。",
+    "content": "防守资源要一层一层用。每交一个资源，都要知道目标是逃生、反打还是拖冷却。"
+  },
+  {
+    "id": "mistake_bad_distance_001",
+    "title": "站在对手强势距离里犹豫",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["距离", "走位", "犹豫", "起手"],
+    "symptom": "玩家停在对手技能刚好能命中的位置，没有主动拉开或压进。",
+    "risk": "让对手用最舒服的距离先手。",
+    "content": "站位要么退到对手打不到，要么压到能干扰对手释放。停在对手强势距离中间最容易被白打。"
+  },
+  {
+    "id": "mistake_second_skill_after_whiff_001",
+    "title": "一技能空后立刻交二技能",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["技能空放", "二技能", "追加", "真空期"],
+    "symptom": "第一个技能没中，马上用第二个技能补救。",
+    "risk": "两个技能都进入冷却，自己完全失去主动权。",
+    "content": "补救技能不是不能交，但要看距离和对手反打能力。大多数情况下，第一技能空了先撤比继续赌更稳。"
+  },
+  {
+    "id": "mistake_ult_for_damage_only_001",
+    "title": "只为伤害放奥义",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["奥义", "伤害", "收尾", "资源"],
+    "symptom": "看到血量差就急着放奥义，没有考虑对手替身和规避。",
+    "risk": "奥义空掉后失去威慑，后续回合更难收尾。",
+    "content": "奥义的价值不只是伤害，还包括威慑和确定收尾。没有确认时，不要把奥义当成普通技能乱交。"
+  },
+  {
+    "id": "mistake_no_review_target_001",
+    "title": "一局想改太多问题",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["训练", "复盘", "目标", "作业"],
+    "symptom": "复盘后同时想练起手、替身、连招、走位。",
+    "risk": "注意力被分散，下一局仍然靠习惯打。",
+    "content": "每次复盘只选一个最影响胜负的问题。先让一个动作变稳定，再追加下一项训练。"
+  },
+  {
+    "id": "mistake_no_cooldown_memory_001",
+    "title": "不记对手技能冷却",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["冷却", "技能", "记忆", "反打"],
+    "symptom": "对手关键技能刚交完，玩家没有抓真空期。",
+    "risk": "错过最容易进攻的窗口，反而在对手技能转好后进攻。",
+    "content": "至少记住对手最关键的一个起手技能。它刚空时是你的进攻窗口，它快好时要降低前压风险。"
+  },
+  {
+    "id": "mistake_bad_summon_001",
+    "title": "通灵只当起手用",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["通灵", "起手", "保护", "防守"],
+    "symptom": "通灵总在开局或中立直接交掉。",
+    "risk": "真正需要保护或反打时没有通灵。",
+    "content": "通灵可以起手，也可以保护技能真空期和防守反打。不要每局都在同一个时间点交。"
+  },
+  {
+    "id": "mistake_bad_scroll_001",
+    "title": "秘卷释放没有目的",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["秘卷", "目的", "起手", "防守"],
+    "symptom": "秘卷好了就放，或者紧张时乱按。",
+    "risk": "秘卷没有换到位置、资源或伤害。",
+    "content": "每次秘卷都要问一句：我是想起手、防守、拖冷却，还是逼对手走位？说不清就先不交。"
+  },
+  {
+    "id": "mistake_corner_greed_001",
+    "title": "墙角贪压被反打",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["墙角", "压场", "贪", "反打"],
+    "symptom": "把对手压到墙角后持续贴脸，但技能已经进入冷却。",
+    "risk": "对手一旦反手，玩家没有技能保护。",
+    "content": "墙角优势要用资源维持。没资源时可以退半步保持威胁，不要一直贴脸给对手机会。"
+  },
+  {
+    "id": "mistake_combo_unstable_001",
+    "title": "基础连招不稳定",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": ["连招", "稳定", "掉连", "训练"],
+    "symptom": "起手成功后经常掉连或衔接失误。",
+    "risk": "好不容易拿到先手，却没有转化为血量和资源优势。",
+    "content": "基础连招不稳时，不要先追求花式打法。先保证最稳伤害和最稳收尾，再练更高收益路线。"
+  },
+  {
+    "id": "mistake_tunnel_vision_001",
+    "title": "只看自己技能不看对手状态",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["观察", "对手", "状态", "资源"],
+    "symptom": "玩家只根据自己技能是否冷却来决定进攻。",
+    "risk": "忽视对手替身、通灵、秘卷和强势技能，导致进攻撞进对手资源。",
+    "content": "进攻前同时看两件事：我有什么，对手有什么。只看自己资源会让很多进攻变成送。"
+  },
+  {
+    "id": "mistake_same_pattern_001",
+    "title": "进攻路线太固定",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": ["习惯", "路线", "预判", "起手"],
+    "symptom": "每次进攻都从同一方向、同一距离、同一技能开始。",
+    "risk": "对手第二次以后可以提前反制。",
+    "content": "固定路线会让对手不用猜。可以用假前压、停顿、后撤再进、秘卷开路等方式打乱节奏。"
+  }
+]
