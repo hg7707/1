@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: naruto-duel-coach
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SILICONFLOW_API_KEY
+        sync: false
+      - key: SILICONFLOW_MODEL
+        value: deepseek-ai/DeepSeek-V3.2
+      - key: SILICONFLOW_BASE_URL
+        value: https://api.siliconflow.cn/v1
+      - key: ALLOW_CLIENT_API_KEYS
+        value: "false"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "3600000"
+      - key: RATE_LIMIT_MAX
+        value: "80"
+      - key: TRUST_PROXY
+        value: "true"
