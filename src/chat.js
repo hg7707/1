@@ -1,12 +1,11 @@
 export function createFallbackChatResponse({ message, playerProfile, retrieved }) {
   const main = pickMainKnowledge(message, retrieved);
-  const evidence = retrieved.slice(0, 4).map((item) => item.title).join("、");
   const levelText = levelName(playerProfile.level);
 
   if (!main) {
     return {
       reply:
-        "我现在还没从知识库里找到足够依据，所以不硬编。你可以换一种方式描述：你用什么忍者、对面什么忍者、你在哪个时间点被打崩、当时替身和技能还在不在。",
+        "我现在还没找到足够信息，所以不硬编。你可以换一种方式描述：你用什么忍者、对面什么忍者、你在哪个时间点被打崩、当时替身和技能还在不在。",
       evidence: []
     };
   }
@@ -19,8 +18,7 @@ export function createFallbackChatResponse({ message, playerProfile, retrieved }
       `2. 下一局不要同时改很多东西，只盯一个动作：${createAction(message, main)}。`,
       "3. 如果你是在实战里突然不知道怎么选，就先选择更稳的重置距离或保资源，不要用高风险操作补情绪。",
       "",
-      `下一局作业：打 5 局，只记录这个问题出现了几次，以及每次你有没有按上面的动作处理。`,
-      evidence ? `依据：${evidence}` : ""
+      "下一局作业：打 5 局，只记录这个问题出现了几次，以及每次你有没有按上面的动作处理。"
     ]
       .filter(Boolean)
       .join("\n"),
