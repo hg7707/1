@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-const allowClientApiKeys = process.env.ALLOW_CLIENT_API_KEYS === "true";
+const allowClientApiKeys = process.env.ALLOW_CLIENT_API_KEYS !== "false";
 
 if (process.env.TRUST_PROXY === "true") {
   app.set("trust proxy", 1);
@@ -191,9 +191,9 @@ app.listen(port, () => {
 });
 
 function getRequestApiConfig(clientConfig) {
+  if (allowClientApiKeys) return normalizeApiConfig(clientConfig);
   const serverConfig = getServerApiConfig();
   if (serverConfig) return serverConfig;
-  if (allowClientApiKeys) return normalizeApiConfig(clientConfig);
   return null;
 }
 
