@@ -1,6 +1,6 @@
 # 决斗场 AI 教练智能体
 
-这是一个面向公开网站的火影忍者手游决斗场 AI 教练。普通用户打开网站后可以直接和教练对话，也可以提交赛后复盘。
+这是一个面向《火影忍者手游》决斗场训练的 AI 教练网站。用户打开网站后，必须填写自己的硅基流动 API key 才能和教练对话。
 
 ## 当前结构
 
@@ -24,22 +24,28 @@ npm start
 http://localhost:3000
 ```
 
-## 公开网站模式
+## 用户自填 API key 模式
 
-公开部署时，不要让用户在前端填写 API key。站长应该在服务器环境变量里配置：
+默认模式是让每个用户在网页里填写自己的硅基流动 API key：
 
 ```text
-SILICONFLOW_API_KEY=你的硅基流动 API key
+ALLOW_CLIENT_API_KEYS=true
 SILICONFLOW_MODEL=deepseek-ai/DeepSeek-V3.2
 SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1
-ALLOW_CLIENT_API_KEYS=false
 ```
 
-配置成功后，页面顶部会显示“站点 AI 已启用”，所有用户都可以直接使用教练。
+用户的 key 只保存在当前浏览器的 `localStorage`，不会写进前端源码，也不会使用站长自己的 key。用户不填 key 时，无法发送对话或调用模型。
+
+如果你确实想改成站长统一付费模式，才需要设置：
+
+```text
+ALLOW_CLIENT_API_KEYS=false
+SILICONFLOW_API_KEY=你的硅基流动 API key
+```
 
 ## 知识库
 
-你后续主要维护 `knowledge` 文件夹：
+后续主要维护 `knowledge` 文件夹：
 
 - `mechanics.json`：机制知识
 - `mistakes.json`：常见错误
@@ -56,6 +62,6 @@ ALLOW_CLIENT_API_KEYS=false
 ## 安全提醒
 
 - 不要把 `.env` 上传到公开仓库。
-- 不要把硅基流动 API key 写进前端代码。
+- 不要把自己的硅基流动 API key 写进前端代码。
 - 如果 API key 曾经截图暴露过，建议删除旧 key 并重新创建。
-- 公开网站已经带基础 IP 限流，可通过 `RATE_LIMIT_MAX` 调整。
+- 当前模式下请求仍会经过你的服务器转发到模型服务，公开网站建议保留基础 IP 限流。
