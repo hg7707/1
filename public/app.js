@@ -4,7 +4,6 @@ const chatInput = document.querySelector("#chat-input");
 const chatSubmit = document.querySelector("#chat-submit");
 const chatMessages = document.querySelector("#chat-messages");
 const chatSamples = document.querySelectorAll(".chat-sample");
-const providerSelect = document.querySelector("#provider-select");
 const siliconflowKey = document.querySelector("#siliconflow-key");
 const siliconflowModel = document.querySelector("#siliconflow-model");
 const siliconflowBaseUrl = document.querySelector("#siliconflow-base-url");
@@ -12,13 +11,11 @@ const saveProvider = document.querySelector("#save-provider");
 const testProvider = document.querySelector("#test-provider");
 const providerStatus = document.querySelector("#provider-status");
 
-let publicProvider = "local-fallback";
-let allowClientApiKeys = true;
 let chatHistory = [
   {
     role: "assistant",
     content:
-      "我是你的决斗场教练。先在左侧填写基本信息和 API key，然后直接描述你这一局的问题。没填 API key 时，也可以用本地预览模式。"
+      "我是你的决斗场教练。请先在左侧填写硅基流动 API key，然后直接描述你这一局的问题。"
   }
 ];
 
@@ -30,6 +27,11 @@ chatForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const message = chatInput.value.trim();
   if (!message) return;
+  if (!hasApiKey()) {
+    providerStatus.textContent = "请先填写硅基流动 API key，保存或测试后再开始对话。";
+    siliconflowKey.focus();
+    return;
+  }
 
   chatHistory.push({ role: "user", content: message });
   chatInput.value = "";
@@ -56,18 +58,22 @@ chatSamples.forEach((button) => {
 });
 
 saveProvider.addEventListener("click", () => {
-  if (!allowClientApiKeys) return;
+  if (!hasApiKey()) {
+    providerStatus.textContent = "请先填写硅基流动 API key。";
+    siliconflowKey.focus();
+    return;
+  }
   const config = collectApiConfig();
   localStorage.setItem("duelCoachApiConfig", JSON.stringify(config));
-  providerStatus.textContent =
-    config.provider === "siliconflow" && config.apiKey ? "已保存，下一次提问会调用模型。" : "已保存为本地预览模式。";
+  providerStatus.textContent = "已保存，下一次提问会调用硅基流动模型。";
   updateHealthText();
 });
 
 testProvider.addEventListener("click", async () => {
   const config = collectApiConfig();
-  if (allowClientApiKeys && (config.provider !== "siliconflow" || !config.apiKey)) {
-    providerStatus.textContent = "请先选择硅基流动，并填写 API key。";
+  if (!config.apiKey) {
+    providerStatus.textContent = "请先填写硅基流动 API key。";
+    siliconflowKey.focus();
     return;
   }
 
@@ -79,26 +85,20 @@ testProvider.addEventListener("click", async () => {
     const response = await fetch("/api/test-provider", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apiConfig: allowClientApiKeys ? config : undefined })
+      body: JSON.stringify({ apiConfig: config })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || data.error || "连接失败");
 
-    if (allowClientApiKeys) {
-      localStorage.setItem("duelCoachApiConfig", JSON.stringify(config));
-    }
+    localStorage.setItem("duelCoachApiConfig", JSON.stringify(config));
     providerStatus.textContent = `连接成功：${data.model}`;
     updateHealthText();
   } catch (error) {
     providerStatus.textContent = `连接失败：${error.message}`;
   } finally {
     testProvider.disabled = false;
-    testProvider.textContent = allowClientApiKeys ? "测试" : "测试站点模型";
+    testProvider.textContent = "测试";
   }
-});
-
-providerSelect.addEventListener("change", () => {
-  updateHealthText();
 });
 
 async function askCoach() {
@@ -134,11 +134,7 @@ async function askCoach() {
 async function boot() {
   try {
     const response = await fetch("/api/health");
-    const data = await response.json();
-
-    publicProvider = data.provider || "local-fallback";
-    allowClientApiKeys = Boolean(data.allowClientApiKeys);
-    updateProviderVisibility();
+    await response.json();
     updateHealthText();
   } catch {
     health.textContent = "服务未连接";
@@ -148,25 +144,18 @@ async function boot() {
 function loadProviderConfig() {
   try {
     const config = JSON.parse(localStorage.getItem("duelCoachApiConfig") || "{}");
-    providerSelect.value = config.provider || "local";
     siliconflowKey.value = config.apiKey || "";
     siliconflowModel.value = config.model || "deepseek-ai/DeepSeek-V3.2";
     siliconflowBaseUrl.value = normalizeSiliconFlowBaseUrl(config.baseUrl);
     updateHealthText();
   } catch {
-    providerSelect.value = "local";
+    siliconflowModel.value = "deepseek-ai/DeepSeek-V3.2";
+    siliconflowBaseUrl.value = "https://api.siliconflow.cn/v1";
+    updateHealthText();
   }
 }
 
 function collectApiConfig() {
-  if (!allowClientApiKeys) {
-    return { provider: "server" };
-  }
-
-  if (providerSelect.value !== "siliconflow") {
-    return { provider: "local" };
-  }
-
   return {
     provider: "siliconflow",
     apiKey: normalizeApiKey(siliconflowKey.value),
@@ -175,37 +164,20 @@ function collectApiConfig() {
   };
 }
 
-function updateProviderVisibility() {
-  document.querySelectorAll(".client-provider-field").forEach((element) => {
-    element.hidden = !allowClientApiKeys;
-  });
-  [providerSelect, siliconflowKey, siliconflowModel, siliconflowBaseUrl, saveProvider].forEach((element) => {
-    element.disabled = !allowClientApiKeys;
-  });
-  testProvider.textContent = allowClientApiKeys ? "测试" : "测试站点模型";
-}
-
 function updateHealthText() {
-  if (!allowClientApiKeys) {
-    if (publicProvider === "siliconflow" || publicProvider === "openai") {
-      health.textContent = "站点模型";
-      providerStatus.textContent = "当前使用服务器配置的模型。";
-      return;
-    }
-    health.textContent = "本地预览";
-    providerStatus.textContent = "当前使用本地预览回答。";
-    return;
-  }
-
   const config = collectApiConfig();
-  if (config.provider === "siliconflow" && config.apiKey) {
+  if (config.apiKey) {
     health.textContent = "API 已配置";
     providerStatus.textContent = "会使用当前浏览器保存的 API key。";
     return;
   }
 
-  health.textContent = "本地预览";
-  providerStatus.textContent = "选择硅基流动并填写 API key 后，教练会调用模型回答。";
+  health.textContent = "需要 API key";
+  providerStatus.textContent = "必须填写硅基流动 API key 后才可以使用教练。";
+}
+
+function hasApiKey() {
+  return Boolean(normalizeApiKey(siliconflowKey.value));
 }
 
 function collectPlayerProfile() {
@@ -257,7 +229,7 @@ function normalizeApiKey(value) {
   return String(value || "")
     .trim()
     .replace(/^bearer\s+/i, "")
-    .replace(/^["']|["']$/g, "")
+    .replace(/^(["'])|(["'])$/g, "")
     .trim();
 }
 
