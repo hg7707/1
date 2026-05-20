@@ -5,15 +5,10 @@ import { fileURLToPath } from "node:url";
 import { loadKnowledgeBase } from "./src/knowledge.js";
 import { retrieveKnowledge } from "./src/retriever.js";
 import {
-  createAiChatResponse,
-  createAiReport,
   createSiliconFlowChatResponse,
   createSiliconFlowReport,
-  testOpenAIConnection,
   testSiliconFlowConnection
 } from "./src/ai.js";
-import { createFallbackReport } from "./src/report.js";
-import { createFallbackChatResponse } from "./src/chat.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +34,6 @@ app.get("/api/health", (_req, res) => {
     ok: true,
     provider: configuredProvider(),
     publicAiConfigured: Boolean(getServerApiConfig()),
-    openAiConfigured: Boolean(process.env.OPENAI_API_KEY),
     siliconFlowConfigured: Boolean(process.env.SILICONFLOW_API_KEY),
     allowClientApiKeys
   });
@@ -60,25 +54,12 @@ app.get("/api/knowledge/summary", async (_req, res, next) => {
 app.post("/api/analyze", apiLimiter, async (req, res, next) => {
   try {
     const match = normalizeMatch(req.body);
-    const apiConfig = getRequestApiConfig(req.body.apiConfig);
+    const apiConfig = requireSiliconFlowApiConfig(getRequestApiConfig(req.body.apiConfig));
     const knowledge = await loadKnowledgeBase();
     const retrieved = retrieveKnowledge(match, knowledge);
 
-    if (apiConfig?.provider === "siliconflow" && apiConfig.apiKey) {
-      const report = await createSiliconFlowReport(match, retrieved, apiConfig);
-      return res.json({ provider: "siliconflow", report, retrieved });
-    }
-
-    if (apiConfig?.provider === "openai" && process.env.OPENAI_API_KEY) {
-      const report = await createAiReport(match, retrieved);
-      return res.json({ provider: "openai", report, retrieved });
-    }
-
-    res.json({
-      provider: "local-fallback",
-      report: createFallbackReport(match, retrieved),
-      retrieved
-    });
+    const report = await createSiliconFlowReport(match, retrieved, apiConfig);
+    res.json({ provider: "siliconflow", report, retrieved });
   } catch (error) {
     next(error);
   }
@@ -89,7 +70,7 @@ app.post("/api/chat", apiLimiter, async (req, res, next) => {
     const messages = normalizeMessages(req.body.messages);
     const latest = messages.at(-1)?.content || "";
     const playerProfile = normalizePlayerProfile(req.body.playerProfile);
-    const apiConfig = getRequestApiConfig(req.body.apiConfig);
+    const apiConfig = requireSiliconFlowApiConfig(getRequestApiConfig(req.body.apiConfig));
     const knowledge = await loadKnowledgeBase();
     const retrieved = retrieveKnowledge(
       {
@@ -104,36 +85,16 @@ app.post("/api/chat", apiLimiter, async (req, res, next) => {
       knowledge
     );
 
-    if (apiConfig?.provider === "siliconflow" && apiConfig.apiKey) {
-      const reply = await createSiliconFlowChatResponse({
-        messages,
-        playerProfile,
-        retrieved,
-        apiConfig
-      });
-      return res.json({
-        provider: "siliconflow",
-        reply,
-        evidence: toEvidence(retrieved),
-        retrieved
-      });
-    }
-
-    if (apiConfig?.provider === "openai" && process.env.OPENAI_API_KEY) {
-      const reply = await createAiChatResponse({ messages, playerProfile, retrieved });
-      return res.json({
-        provider: "openai",
-        reply,
-        evidence: toEvidence(retrieved),
-        retrieved
-      });
-    }
-
-    const fallback = createFallbackChatResponse({ message: latest, playerProfile, retrieved });
+    const reply = await createSiliconFlowChatResponse({
+      messages,
+      playerProfile,
+      retrieved,
+      apiConfig
+    });
     res.json({
-      provider: "local-fallback",
-      reply: fallback.reply,
-      evidence: fallback.evidence,
+      provider: "siliconflow",
+      reply,
+      evidence: toEvidence(retrieved),
       retrieved
     });
   } catch (error) {
@@ -143,29 +104,7 @@ app.post("/api/chat", apiLimiter, async (req, res, next) => {
 
 app.post("/api/test-provider", apiLimiter, async (req, res, next) => {
   try {
-    const apiConfig = getRequestApiConfig(req.body.apiConfig);
-    if (!apiConfig) {
-      return res.status(400).json({
-        error: "服务器还没有配置可用模型。站长需要设置 SILICONFLOW_API_KEY。"
-      });
-    }
-
-    if (apiConfig.provider === "openai") {
-      const reply = await testOpenAIConnection();
-      return res.json({
-        ok: true,
-        provider: "openai",
-        model: process.env.OPENAI_MODEL || "gpt-5.5",
-        reply
-      });
-    }
-
-    if (apiConfig.provider !== "siliconflow") {
-      return res.status(400).json({
-        error: "当前测试接口只支持站点模型或硅基流动。"
-      });
-    }
-
+    const apiConfig = requireSiliconFlowApiConfig(getRequestApiConfig(req.body.apiConfig));
     const reply = await testSiliconFlowConnection(apiConfig);
     res.json({
       ok: true,
@@ -197,6 +136,16 @@ function getRequestApiConfig(clientConfig) {
   return null;
 }
 
+function requireSiliconFlowApiConfig(apiConfig) {
+  if (apiConfig?.provider === "siliconflow" && apiConfig.apiKey) {
+    return apiConfig;
+  }
+
+  const error = new Error("请先填写硅基流动 API key。");
+  error.status = 400;
+  throw error;
+}
+
 function getServerApiConfig() {
   if (process.env.SILICONFLOW_API_KEY) {
     return {
@@ -207,16 +156,12 @@ function getServerApiConfig() {
     };
   }
 
-  if (process.env.OPENAI_API_KEY) {
-    return { provider: "openai" };
-  }
-
   return null;
 }
 
 function configuredProvider() {
   const config = getServerApiConfig();
-  return config?.provider || "local-fallback";
+  return config?.provider || "requires-siliconflow-key";
 }
 
 function toEvidence(retrieved) {
