@@ -1,22 +1,23 @@
-# 公开部署说明
+# 部署说明
 
-这个版本已经改成公开网站模式：普通用户不需要填写 API key，站长在服务器环境变量里配置硅基流动 key。
+这个版本默认使用“用户自填 API key”模式：普通用户在网页里填写自己的硅基流动 API key，站长不需要在服务器上配置自己的 key。
 
-## 必填环境变量
+## 推荐环境变量
 
 ```text
-SILICONFLOW_API_KEY=你的硅基流动 API key
+ALLOW_CLIENT_API_KEYS=true
 SILICONFLOW_MODEL=deepseek-ai/DeepSeek-V3.2
 SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1
-ALLOW_CLIENT_API_KEYS=false
 RATE_LIMIT_MAX=80
 TRUST_PROXY=true
 ```
 
-## 本地生产模式测试
+不要设置 `SILICONFLOW_API_KEY`，这样可以避免误用站长自己的额度。
+
+## 本地测试
 
 1. 复制 `.env.example` 为 `.env`。
-2. 填入 `SILICONFLOW_API_KEY`。
+2. 确认 `ALLOW_CLIENT_API_KEYS=true`。
 3. 运行：
 
 ```powershell
@@ -30,7 +31,7 @@ npm start
 http://localhost:3000
 ```
 
-如果顶部显示“站点 AI 已启用”，说明公开模式已经生效。
+页面顶部显示“需要 API key”时，说明还没有填写用户 key；用户填写自己的硅基流动 API key 并测试连接后，才能开始对话。
 
 ## Docker 部署
 
@@ -51,17 +52,28 @@ docker run -p 3000:3000 --env-file .env duel-coach
 在平台的环境变量设置里填入：
 
 ```text
-SILICONFLOW_API_KEY
-SILICONFLOW_MODEL
-SILICONFLOW_BASE_URL
-ALLOW_CLIENT_API_KEYS=false
+ALLOW_CLIENT_API_KEYS=true
+SILICONFLOW_MODEL=deepseek-ai/DeepSeek-V3.2
+SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1
+RATE_LIMIT_WINDOW_MS=3600000
 RATE_LIMIT_MAX=80
 TRUST_PROXY=true
 ```
 
+## 站长统一付费模式
+
+如果以后想让所有用户共用服务器上的模型 key，可以改成：
+
+```text
+ALLOW_CLIENT_API_KEYS=false
+SILICONFLOW_API_KEY=你的硅基流动 API key
+```
+
+这种模式会消耗站长自己的额度。
+
 ## 安全提醒
 
 - 不要把 `.env` 上传到公开仓库。
-- 不要让普通用户在前端填写你的站长 API key。
-- 如果 API key 曾在截图或聊天里暴露过，建议删除旧 key 并重新创建。
-- `RATE_LIMIT_MAX` 控制每个 IP 每小时最多请求次数，公开后建议根据余额调低或接入更强的网关限流。
+- 不要把站长自己的 API key 写进前端代码。
+- 用户填写的 key 会保存在用户自己的浏览器 `localStorage`。
+- 请求仍会经过你的服务器转发到硅基流动，公开后建议保留 `RATE_LIMIT_MAX`。
