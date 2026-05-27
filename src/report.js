@@ -9,7 +9,7 @@ export function createFallbackReport(match, retrieved) {
   const evidence = buildEvidence(retrieved, keyMistakes, training);
 
   return {
-    summary: `本局优先处理的问题是：${main.title}。这是本地预览模式生成的复盘，接入 API key 后会由大模型组织成更自然的完整报告。`,
+    summary: `本局优先处理的问题是：${main.title}。这是基于本地知识库生成的保守复盘。`,
     mainProblem: {
       title: main.title,
       explanation: main.why
@@ -44,7 +44,7 @@ function buildMistakes(match, retrieved) {
 function bestItemForMoment(moment, retrieved, used) {
   const text = normalize(`${moment.description || ""} ${moment.time || ""}`);
   const candidates = retrieved
-    .filter((item) => item.sourceType === "mistakes" && !used.has(item.id))
+    .filter((item) => item.category === "mistake" && !used.has(item.id))
     .map((item) => ({ item, score: overlapScore(text, item) }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score);
@@ -66,12 +66,12 @@ function overlapScore(text, item) {
 function createBetterMove(moment, item) {
   const text = `${moment.description || ""} ${item?.title || ""}`;
   if (text.includes("技能空") || text.includes("空放")) {
-    return "技能没有命中时，立刻后撤或横向走位重置距离，先等冷却和对手动作，不要急着补第二个关键技能。";
+    return "技能没有命中时，立刻后撤或横向走位重置距离，先等冷却和观察对手动作，不急着补第二个关键技能。";
   }
   if (text.includes("替身")) {
     return "替身前先判断这波伤害是否值得交资源；替身后优先确认能否反打，不能反打就先拉开距离。";
   }
-  if (text.includes("奥义")) {
+  if (text.includes("奥义") || text.includes("大招")) {
     return "奥义尽量放在命中确认、对手无替身、或墙角位置受限时使用，避免把奥义当普通起手技能。";
   }
   if (text.includes("压场") || text.includes("墙角")) {
@@ -86,25 +86,25 @@ function createBetterMove(moment, item) {
 function buildRecommendations(retrieved, mistakes) {
   const mistakeTitles = new Set(mistakes.map((item) => item.title));
   const preferred = retrieved.filter((item) => mistakeTitles.has(item.title));
-  const supporting = retrieved.filter((item) => item.sourceType !== "trainings" && !mistakeTitles.has(item.title));
+  const supporting = retrieved.filter((item) => item.category !== "training" && !mistakeTitles.has(item.title));
   return [...preferred, ...supporting].slice(0, 4).map((item) => ({
     title: item.title,
     action: item.content || "根据该知识点重新检查本局操作。",
-    confidence: item.score > 0 ? "知识库命中" : "默认展示"
+    confidence: item.score >= 20 ? "知识库命中" : "通用建议"
   }));
 }
 
 function buildTraining(retrieved, main) {
   const mainText = normalize(`${main.title} ${main.why}`);
   const training = retrieved
-    .filter((item) => item.sourceType === "trainings")
+    .filter((item) => item.category === "training")
     .map((item) => ({ item, score: overlapScore(mainText, item) }))
     .sort((a, b) => b.score - a.score)[0]?.item;
 
   return {
     title: training?.title || "单点问题记录",
     task: training?.content || "接下来 5 局只记录同一类失误，不同时练多个问题。",
-    successMetric: "同类失误出现次数下降，且能说清楚每次操作目的。"
+    successMetric: "同类失误出现次数下降，且能说清每次操作目的。"
   };
 }
 
@@ -131,8 +131,8 @@ function buildEvidence(retrieved, mistakes, training) {
 function createReminder(main) {
   const text = `${main.title} ${main.why}`;
   if (text.includes("技能空") || text.includes("空放")) return "技能空了先退，不用第二个技能补情绪。";
-  if (text.includes("替身")) return "替身前问一句：这次能换到逃生、反打，还是只是紧张？";
-  if (text.includes("奥义")) return "奥义只在确认收益时交，不拿高资源赌运气。";
+  if (text.includes("替身")) return "替身前问一句：这次能逃生、反打，还是只是紧张？";
+  if (text.includes("奥义") || text.includes("大招")) return "奥义只在确认收益时交，不拿高资源赌运气。";
   if (text.includes("压场")) return "压场前先看资源，没资源就退半步保威胁。";
   return "下一局只盯一个目标：先确认命中或资源优势，再扩大进攻。";
 }

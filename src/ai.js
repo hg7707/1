@@ -1,12 +1,14 @@
 import OpenAI from "openai";
 import { createFallbackReport } from "./report.js";
 
+const KNOWLEDGE_VERSION = "2026-05 本地知识库";
+
 export async function createAiReport(match, retrieved) {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await client.responses.create({
     model: process.env.OPENAI_MODEL || "gpt-5.5",
     instructions: buildReportInstructions(),
-    input: JSON.stringify({ match, retrievedKnowledge: retrieved }, null, 2),
+    input: JSON.stringify(buildReportInput(match, retrieved), null, 2),
     max_output_tokens: 1800
   });
 
@@ -20,23 +22,37 @@ export async function createAiChatResponse({ messages, playerProfile, retrieved 
   const response = await client.responses.create({
     model: process.env.OPENAI_MODEL || "gpt-5.5",
     instructions: buildCoachInstructions(),
-    input: JSON.stringify(
-      {
-        playerProfile,
-        recentMessages: messages.slice(-10),
-        retrievedKnowledge: retrieved
-      },
-      null,
-      2
-    ),
+    input: JSON.stringify(buildChatInput({ messages, playerProfile, retrieved }), null, 2),
     max_output_tokens: 1400
   });
 
-  return response.output_text || "我这边没有生成出有效回答。你可以把问题说得更具体一点，比如：我什么时候该交替身？";
+  return response.output_text || "我现在没有生成有效回答。请补充你用的忍者、对面忍者、输在哪个回合，以及当时替身和技能是否可用。";
 }
 
 export async function createSiliconFlowChatResponse({ messages, playerProfile, retrieved, apiConfig }) {
-  const content = await createSiliconFlowCompletion({
+  const context = buildChatInput({ messages, playerProfile, retrieved });
+  if (shouldUseSafeFallback(context)) {
+    return buildSafeFallbackReply(context);
+  }
+
+  const draft = await createSiliconFlowCompletion({
+    apiConfig,
+    messages: [
+      { role: "system", content: buildCoachInstructions() },
+      { role: "user", content: JSON.stringify(context, null, 2) }
+    ],
+    maxTokens: 1400,
+    temperature: 0.15
+  });
+
+  if (!draft) {
+    return "硅基流动返回了空内容。可以换个模型，或者检查 API key 和余额。";
+  }
+
+  const audit = await auditCoachAnswer({ apiConfig, answer: draft, context });
+  if (audit.pass) return draft;
+
+  const rewritten = await createSiliconFlowCompletion({
     apiConfig,
     messages: [
       { role: "system", content: buildCoachInstructions() },
@@ -44,19 +60,24 @@ export async function createSiliconFlowChatResponse({ messages, playerProfile, r
         role: "user",
         content: JSON.stringify(
           {
-            playerProfile,
-            recentMessages: messages.slice(-8),
-            retrievedKnowledge: retrieved
+            ...context,
+            rewriteBecauseAuditFailed: true,
+            auditIssues: audit.issues,
+            previousAnswer: draft
           },
           null,
           2
         )
       }
     ],
-    maxTokens: 1400
+    maxTokens: 1400,
+    temperature: 0.1
   });
 
-  return content || "硅基流动返回了空内容。可以换个模型，或者检查 API key 和余额。";
+  if (!rewritten) return buildSafeFallbackReply(context);
+
+  const rewrittenAudit = await auditCoachAnswer({ apiConfig, answer: rewritten, context });
+  return rewrittenAudit.pass ? rewritten : buildSafeFallbackReply(context, rewrittenAudit.issues);
 }
 
 export async function createSiliconFlowReport(match, retrieved, apiConfig) {
@@ -64,13 +85,11 @@ export async function createSiliconFlowReport(match, retrieved, apiConfig) {
     apiConfig,
     messages: [
       { role: "system", content: buildReportInstructions() },
-      {
-        role: "user",
-        content: JSON.stringify({ match, retrievedKnowledge: retrieved }, null, 2)
-      }
+      { role: "user", content: JSON.stringify(buildReportInput(match, retrieved), null, 2) }
     ],
     maxTokens: 1800,
-    responseFormat: { type: "json_object" }
+    responseFormat: { type: "json_object" },
+    temperature: 0.1
   });
 
   const parsed = parseJson(content || "");
@@ -81,7 +100,8 @@ export async function testSiliconFlowConnection(apiConfig) {
   const content = await createSiliconFlowCompletion({
     apiConfig,
     messages: [{ role: "user", content: "请只回复 OK，用于测试 API 连接。" }],
-    maxTokens: 20
+    maxTokens: 20,
+    temperature: 0
   });
 
   return content;
@@ -98,7 +118,13 @@ export async function testOpenAIConnection() {
   return response.output_text || "";
 }
 
-async function createSiliconFlowCompletion({ apiConfig, messages, maxTokens, responseFormat }) {
+async function createSiliconFlowCompletion({
+  apiConfig,
+  messages,
+  maxTokens,
+  responseFormat,
+  temperature = 0.15
+}) {
   const apiKey = apiConfig?.apiKey;
   if (!apiKey) throw new Error("缺少硅基流动 API key");
 
@@ -109,27 +135,14 @@ async function createSiliconFlowCompletion({ apiConfig, messages, maxTokens, res
     messages: messages.slice(-10),
     stream: false,
     max_tokens: maxTokens,
-    temperature: 0.3,
+    temperature,
+    top_p: 0.75,
     ...(responseFormat ? { response_format: responseFormat } : {})
   };
-  let response = await fetch(`${baseUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
 
+  let response = await postChatCompletion(baseUrl, apiKey, body);
   if (response.status === 401 && baseUrl.includes("api.siliconflow.com")) {
-    response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
+    response = await postChatCompletion("https://api.siliconflow.cn/v1", apiKey, body);
   }
 
   const data = await response.json().catch(() => ({}));
@@ -140,34 +153,133 @@ async function createSiliconFlowCompletion({ apiConfig, messages, maxTokens, res
   return data.choices?.[0]?.message?.content || "";
 }
 
-function normalizeBaseUrl(baseUrl) {
-  return (baseUrl || "https://api.siliconflow.cn/v1").replace(/\/$/, "");
+function postChatCompletion(baseUrl, apiKey, body) {
+  return fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
 }
 
-function createSiliconFlowError(status, data) {
-  const raw = data.message || data.error?.message || data.error || "";
-  if (status === 401) {
-    return new Error(
-      `硅基流动认证失败：401。请确认 API key 没有被删除或停用；如果你是在 cloud.siliconflow.cn 创建的 key，接口地址请优先用 https://api.siliconflow.cn/v1。${raw ? `原始信息：${raw}` : ""}`
-    );
-  }
+async function auditCoachAnswer({ apiConfig, answer, context }) {
+  const localAudit = auditCoachAnswerLocally(answer, context);
+  if (!localAudit.pass) return localAudit;
 
-  if (status === 400 || status === 404) {
-    return new Error(
-      `硅基流动请求失败：${status}。请检查模型名是否完整，例如 deepseek-ai/DeepSeek-V3.2。${raw ? `原始信息：${raw}` : ""}`
-    );
-  }
+  const content = await createSiliconFlowCompletion({
+    apiConfig,
+    messages: [
+      {
+        role: "system",
+        content:
+          "你是严格的事实审查器。只判断回答是否被输入的 retrievedKnowledge、用户信息或通用决斗场原则支持。禁止补充新游戏知识。只输出 JSON。"
+      },
+      {
+        role: "user",
+        content: JSON.stringify(
+          {
+            auditRules: [
+              "如果回答编造具体忍者技能、帧数、版本强度、连招、秘卷或通灵效果，pass=false。",
+              "如果把不确定内容说成确定事实，pass=false。",
+              "如果没有足够信息却没有追问，pass=false。",
+              "通用原则可以通过，但必须标记为通用建议。",
+              "如果回答引用了不在 evidenceTitles 中的知识库标题，pass=false。",
+              "如果 coverage.hasStrongEvidence=false 仍给具体忍者或 matchup 结论，pass=false。"
+            ],
+            evidenceTitles: getEvidenceTitles(context),
+            context,
+            answer
+          },
+          null,
+          2
+        )
+      }
+    ],
+    maxTokens: 400,
+    responseFormat: { type: "json_object" },
+    temperature: 0
+  });
 
-  return new Error(raw || `硅基流动请求失败：${status}`);
+  const parsed = parseJson(content || "");
+  if (!parsed) return { pass: false, issues: ["审查器没有返回有效 JSON"] };
+  return {
+    pass: parsed.pass === true,
+    issues: Array.isArray(parsed.issues) ? parsed.issues.slice(0, 6) : []
+  };
+}
+
+function buildChatInput({ messages, playerProfile, retrieved }) {
+  const latestQuestion = messages.at(-1)?.content || "";
+  const strongEvidence = retrieved.filter((item) => item.score >= 20).slice(0, 8);
+  const supportEvidence = retrieved.filter((item) => item.score < 20).slice(0, 6);
+  const missingFields = getMissingBattleFields(playerProfile);
+  const evidenceTitles = [...strongEvidence, ...supportEvidence].map((item) => item.title);
+
+  return {
+    task: "基于知识库做火影忍者手游决斗场教练回复",
+    knowledgeVersion: KNOWLEDGE_VERSION,
+    reliabilityPolicy: {
+      allowed: [
+        "引用 retrievedKnowledge 中明确出现的机制、错误模式、训练任务和 matchup",
+        "给出不依赖具体忍者技能细节的通用决斗场原则",
+        "在信息不足时追问一个最关键问题"
+      ],
+      forbidden: [
+        "编造具体忍者技能效果、数值、帧数、霸体/无敌/抓取/扫地等机制",
+        "编造当前版本强度、胜率、官方改动或未提供的 matchup 细节",
+        "把推测写成确定事实",
+        "承诺必赢、必克制、绝对最优",
+        "引用 retrievedKnowledge 中不存在的知识库标题"
+      ]
+    },
+    requiredOutputSections: ["【结论】", "【依据】", "【下一局怎么打】", "【不确定/需要补充】", "【训练作业】"],
+    playerProfile,
+    latestQuestion,
+    recentMessages: messages.slice(-8),
+    retrievedKnowledge: {
+      strongEvidence,
+      supportEvidence
+    },
+    coverage: {
+      hasStrongEvidence: strongEvidence.length > 0,
+      hasNinjaSpecificEvidence: strongEvidence.some((item) =>
+        ["ninja_basics", "ninja_playstyles", "ninja_tips", "matchup_decisions"].includes(item.sourceType)
+      ),
+      missingFields,
+      evidenceTitles,
+      instruction:
+        strongEvidence.length > 0
+          ? "优先基于 strongEvidence 回答。"
+          : "没有强证据时，只能给通用原则，并追问一个最关键问题。"
+    }
+  };
+}
+
+function buildReportInput(match, retrieved) {
+  return {
+    task: "基于知识库生成赛后复盘报告",
+    knowledgeVersion: KNOWLEDGE_VERSION,
+    match,
+    retrievedKnowledge: retrieved,
+    reliabilityPolicy: {
+      forbidden: "禁止编造具体忍者技能、版本强度、数值和未命中的 matchup 细节。",
+      fallback: "证据不足时写明当前知识库不足，只给通用复盘建议。"
+    }
+  };
 }
 
 function buildReportInstructions() {
   return `
-你是火影忍者手游决斗场的赛后复盘教练。
-你必须严格根据输入的 match 和 retrievedKnowledge 回答。
-如果知识库没有覆盖某个忍者、机制或 matchup，你必须说“当前知识库不足以判断”，不能编造。
-不要承诺必胜，不要使用“绝对最优”。只能说“推荐处理”“更稳的处理”。
-输出必须是 JSON，不要 Markdown，不要额外解释。
+你是《火影忍者手游》决斗场赛后复盘教练。
+你必须严格根据用户提供的 match 和 retrievedKnowledge 输出报告。
+
+硬性规则：
+1. retrievedKnowledge 没有覆盖的具体忍者、技能、版本强度、连招或 matchup，必须写“当前知识库不足以判断”，不能编造。
+2. 可以给通用决斗场原则，但必须表述为“通用建议”。
+3. 不要承诺“必胜”“绝对最优”“一定克制”。
+4. 输出必须是 JSON，不要 Markdown，不要额外解释。
 
 JSON 结构：
 {
@@ -188,7 +300,7 @@ JSON 结构：
     {
       "title": "建议标题",
       "action": "下一局具体怎么做",
-      "confidence": "知识库命中/信息不足"
+      "confidence": "知识库命中/通用建议/信息不足"
     }
   ],
   "training": {
@@ -200,7 +312,7 @@ JSON 结构：
   "evidence": [
     {
       "title": "知识条目标题",
-      "sourceType": "mechanics/mistakes/trainings/ninjas/matchups",
+      "sourceType": "ninja_basics/ninja_playstyles/ninja_tips/duel_logic/matchup_decisions/matchmaking/rank_recommendations",
       "id": "知识条目 id"
     }
   ]
@@ -210,24 +322,183 @@ JSON 结构：
 
 function buildCoachInstructions() {
   return `
-你是一个专门教玩家打《火影忍者手游》决斗场的中文教练智能体。
-你的目标不是闲聊，而是像教练一样通过提问、判断、纠错、布置训练，帮助玩家提高决斗场水平。
+你是一个专门教玩家打《火影忍者手游》决斗场的中文 AI 教练。
+你的目标不是闲聊，而是像教练一样：判断问题、纠错、给下一局可执行训练。
 
-回答规则：
-1. 必须优先依据 retrievedKnowledge。已有资料没有覆盖的具体忍者或 matchup，不要编造细节。
-2. 可以给通用决斗场原则，但要说明这是通用建议。
-3. 不要说“绝对最优”“必胜”。使用“更稳”“优先”“推荐处理”。
-4. 每次回答尽量具体到下一局能执行的动作。
-5. 如果用户问题太模糊，先给一个初步判断，再问 1 个最关键的追问。
-6. 用户水平低时讲简单动作；水平高时讲资源、节奏、matchup 和心理博弈。
-7. 语气像认真但不端着的教练，直接、清楚、能落地。
+最高优先级规则：
+1. 只能把 retrievedKnowledge、用户输入和通用决斗场原则作为依据。
+2. 如果知识库没有覆盖具体忍者、技能、版本强度、连招、秘卷或通灵效果，必须说明“不确定/当前知识库没有依据”，不能编造。
+3. 具体技能机制、霸体、无敌、抓取、扫地、帧数、数值、版本强度，只有在 retrievedKnowledge 明确写出时才能说。
+4. 用户信息不足时，先给一个通用初判，然后只追问 1 个最关键问题。
+5. 禁止“必胜”“绝对克制”“无脑打”“最强”等过度确定表达。
+6. 高风险结论要标明“基于你当前描述的判断”。
+7. 【依据】里只能写输入中 evidenceTitles 存在的标题，或写“通用决斗场原则”。不能自己发明知识库标题。
+8. coverage.hasStrongEvidence=false 时，不允许给具体忍者对局结论，只能给通用处理和追问。
+9. 不要输出技能冷却时间、伤害比例、帧数、霸体/无敌/抓取/扫地效果，除非 retrievedKnowledge 原文明确提供。
 
-回答格式：
-- 先给结论。
-- 再给 2 到 4 条具体建议。
-- 最后给一个“下一局作业”。
-- 不要向用户展示知识库条目标题、条目 id 或“依据”列表。
+回复格式：
+【结论】
+用 1-2 句说明最可能的问题。证据不足时要直接说证据不足。
+
+【依据】
+列 1-3 条依据。只能写“知识库命中：标题”或“通用决斗场原则”，不要暴露 id。
+
+【下一局怎么打】
+给 2-4 条具体动作建议。每条都要可执行。
+
+【不确定/需要补充】
+如果信息不足，只问 1 个最关键问题；如果信息充分，可以写“暂无”。
+
+【训练作业】
+给一个 5 局以内能验证的训练任务。
 `.trim();
+}
+
+function shouldUseSafeFallback(context) {
+  const latestQuestion = normalizeText(context.latestQuestion);
+  if (!latestQuestion) return true;
+  const asksSpecificMechanic = /技能|机制|冷却|帧|伤害|连招|秘卷|通灵|霸体|无敌|抓取|扫地|版本|强度|克制|怎么打/.test(latestQuestion);
+  return !context.coverage.hasStrongEvidence && asksSpecificMechanic;
+}
+
+function auditCoachAnswerLocally(answer, context) {
+  const issues = [];
+  const text = String(answer || "");
+  const requiredSections = context.requiredOutputSections || [];
+  const evidenceTitles = getEvidenceTitles(context);
+  const forbiddenPatterns = [
+    /必胜|必定|稳赢|绝对克制|无脑打|最强|T0|版本答案/,
+    /\d+\s*(帧|秒冷却|s冷却|%伤害|点伤害)/i,
+    /霸体|无敌|抓取|扫地/
+  ];
+
+  for (const section of requiredSections) {
+    if (!text.includes(section)) issues.push(`缺少固定栏目：${section}`);
+  }
+
+  for (const pattern of forbiddenPatterns) {
+    if (pattern.test(text) && !isUncertaintyStatement(text, pattern) && !isSupportedByEvidence(pattern, context)) {
+      issues.push(`出现未由知识库支持的高风险表述：${pattern}`);
+    }
+  }
+
+  const citedTitles = [...text.matchAll(/知识库命中：([^。\n\r]+)/g)].map((match) => match[1].trim());
+  const fabricatedCitations = citedTitles.filter((title) => !evidenceTitles.includes(title));
+  if (fabricatedCitations.length) {
+    issues.push(`引用了不存在的知识库标题：${fabricatedCitations.join("、")}`);
+  }
+
+  if (!context.coverage.hasStrongEvidence && /打.+建议|克制|对局|具体打法|技能机制/.test(text) && !text.includes("通用")) {
+    issues.push("强证据不足时给出了具体对局结论");
+  }
+
+  if ((context.coverage.missingFields || []).length >= 2 && !text.includes("？") && !text.includes("?")) {
+    issues.push("战况信息不足但没有追问");
+  }
+
+  return { pass: issues.length === 0, issues: issues.slice(0, 6) };
+}
+
+function isSupportedByEvidence(pattern, context) {
+  const supportText = [
+    context.latestQuestion,
+    context.playerProfile?.playerSecret,
+    context.playerProfile?.playerSummon,
+    context.playerProfile?.battleSituation,
+    ...(context.retrievedKnowledge.strongEvidence || []),
+    ...(context.retrievedKnowledge.supportEvidence || [])
+  ]
+    .map((item) =>
+      typeof item === "string" ? item : `${item.title} ${item.content} ${(item.tags || []).join(" ")}`
+    )
+    .join("\n");
+
+  return pattern.test(supportText);
+}
+
+function isUncertaintyStatement(text, pattern) {
+  const matches = [...text.matchAll(new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`))];
+  return matches.every((match) => {
+    const start = Math.max(0, match.index - 18);
+    const end = Math.min(text.length, match.index + match[0].length + 18);
+    const nearby = text.slice(start, end);
+    return /不确定|没有依据|不能判断|不能硬编|知识库不足|未提供/.test(nearby);
+  });
+}
+
+function getMissingBattleFields(playerProfile = {}) {
+  const fields = [
+    ["playerNinja", "我方忍者"],
+    ["enemyNinja", "对方忍者"],
+    ["playerSubstitution", "我方替身状态"],
+    ["enemySubstitution", "对方替身状态"],
+    ["battleSituation", "具体战况"]
+  ];
+  return fields.filter(([key]) => !String(playerProfile[key] || "").trim()).map(([, label]) => label);
+}
+
+function getEvidenceTitles(context) {
+  return [
+    ...(context.retrievedKnowledge?.strongEvidence || []),
+    ...(context.retrievedKnowledge?.supportEvidence || [])
+  ].map((item) => item.title);
+}
+
+function normalizeText(value) {
+  return String(value || "").trim();
+}
+
+function buildSafeFallbackReply(context) {
+  const question = context.latestQuestion || "这个问题";
+  const missing = context.coverage.missingFields || [];
+  const evidence = [
+    ...(context.retrievedKnowledge.strongEvidence || []),
+    ...(context.retrievedKnowledge.supportEvidence || [])
+  ].slice(0, 3);
+  const evidenceLines = evidence.length
+    ? evidence.map((item) => `知识库命中：${item.title}`)
+    : ["通用决斗场原则：信息不足时先保资源、确认收益，不硬编具体机制。"];
+  const questionToAsk = missing.length ? `请先补充：${missing[0]}。` : "请补充这一波开始前双方替身和关键技能是否可用？";
+
+  return [
+    "【结论】",
+    `关于“${question}”，当前知识库和你的描述还不足以支持具体忍者机制判断，所以我不能硬编技能细节。先按通用决斗场原则处理：别在资源不足时继续前压，把目标改成重置距离和确认收益。`,
+    "",
+    "【依据】",
+    ...evidenceLines,
+    "",
+    "【下一局怎么打】",
+    "1. 关键技能没命中时，第一反应先后撤或横向走位，不马上补第二个关键资源。",
+    "2. 交替身前先问自己：这次能逃生、反打，还是只是紧张？只有前两种才优先交。",
+    "3. 有奥义时先确认命中或对手替身不可用，不把奥义当普通起手技能。",
+    "",
+    "【不确定/需要补充】",
+    questionToAsk,
+    "",
+    "【训练作业】",
+    "接下来 5 局只记录一次：关键技能空掉后，你有没有立刻撤出危险距离。"
+  ].join("\n");
+}
+
+function normalizeBaseUrl(baseUrl) {
+  return (baseUrl || "https://api.siliconflow.cn/v1").replace(/\/$/, "");
+}
+
+function createSiliconFlowError(status, data) {
+  const raw = data.message || data.error?.message || data.error || "";
+  if (status === 401) {
+    return new Error(
+      `硅基流动认证失败：401。请确认 API key 没有被删除或停用；如果你是在 cloud.siliconflow.cn 创建的 key，接口地址请优先使用 https://api.siliconflow.cn/v1。${raw ? `原始信息：${raw}` : ""}`
+    );
+  }
+
+  if (status === 400 || status === 404) {
+    return new Error(
+      `硅基流动请求失败：${status}。请检查模型名是否完整，例如 deepseek-ai/DeepSeek-V3.2。${raw ? `原始信息：${raw}` : ""}`
+    );
+  }
+
+  return new Error(raw || `硅基流动请求失败：${status}`);
 }
 
 function parseJson(text) {

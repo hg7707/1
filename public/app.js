@@ -15,7 +15,7 @@ let chatHistory = [
   {
     role: "assistant",
     content:
-      "我是你的决斗场教练。请先在左侧填写硅基流动 API key，然后直接描述你这一局的问题。"
+      "我是你的决斗场教练。请先在左侧填写硅基流动 API key，然后描述这一局的问题。信息不足时我会追问，不会硬编具体忍者机制。"
   }
 ];
 
@@ -104,7 +104,7 @@ testProvider.addEventListener("click", async () => {
 async function askCoach() {
   chatSubmit.disabled = true;
   chatSubmit.textContent = "思考中";
-  const thinking = { role: "assistant", content: "我在分析你描述的局面。" };
+  const thinking = { role: "assistant", content: "我在检索知识库并审查回答..." };
   chatHistory.push(thinking);
   renderChat();
 
@@ -185,7 +185,12 @@ function collectPlayerProfile() {
     level: document.querySelector("#profile-level").value,
     rank: document.querySelector("#profile-rank").value,
     playerNinja: document.querySelector("#profile-player").value,
-    enemyNinja: document.querySelector("#profile-enemy").value
+    enemyNinja: document.querySelector("#profile-enemy").value,
+    playerSubstitution: document.querySelector("#profile-player-sub").value,
+    enemySubstitution: document.querySelector("#profile-enemy-sub").value,
+    playerSecret: document.querySelector("#profile-secret").value,
+    playerSummon: document.querySelector("#profile-summon").value,
+    battleSituation: document.querySelector("#profile-situation").value
   };
 }
 
@@ -229,7 +234,7 @@ function normalizeApiKey(value) {
   return String(value || "")
     .trim()
     .replace(/^bearer\s+/i, "")
-    .replace(/^(["'])|(["'])$/g, "")
+    .replace(/^["']|["']$/g, "")
     .trim();
 }
 

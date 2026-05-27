@@ -131,6 +131,15 @@ textarea {
   max-height: 180px;
   padding: 14px 52px 14px 16px;
   line-height: 1.6;
+  resize: vertical;
+}
+
+.settings textarea {
+  min-height: 86px;
+  padding: 10px 11px;
+}
+
+#chat-input {
   resize: none;
 }
 
@@ -315,6 +324,7 @@ textarea:focus {
 
   .settings-section h2,
   .setting-actions,
+  .wide-field,
   #provider-status {
     grid-column: 1 / -1;
   }

@@ -1,0 +1,410 @@
+[
+  {
+    "id": "mechanic_substitution_001",
+    "title": "替身使用原则",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": [
+      "替身",
+      "资源",
+      "反打",
+      "逃生"
+    ],
+    "content": "替身通常用于打断对方稳定收益，或在替身后能够拉开距离、反打、重置局面时使用。低伤害试探命中后立刻替身，往往会让后续回合更被动。"
+  },
+  {
+    "id": "mechanic_cooldown_001",
+    "title": "技能真空期处理",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": [
+      "技能空放",
+      "空放",
+      "冷却",
+      "后摇",
+      "拉扯"
+    ],
+    "content": "关键技能未命中后，玩家会进入技能真空期。此时优先拉开距离、规避反打、等待冷却，不应继续用身体硬抢先手。"
+  },
+  {
+    "id": "mechanic_confirm_001",
+    "title": "确认收益后扩大进攻",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "确认",
+      "命中确认",
+      "起手",
+      "追击",
+      "奥义"
+    ],
+    "content": "高价值技能、奥义、关键追击应尽量建立在命中确认、对手替身不可用、或对手位置受限的前提下。没有确认就追加资源，会把优势变成赌博。"
+  },
+  {
+    "id": "mechanic_distance_001",
+    "title": "距离管理",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": [
+      "距离",
+      "走位",
+      "起手",
+      "拉扯"
+    ],
+    "content": "距离决定双方技能的有效威胁。没有起手把握时，不要一直站在对手技能刚好能打到的位置，可以用前后微动诱导对手先交技能。"
+  },
+  {
+    "id": "mechanic_neutral_001",
+    "title": "中立回合争夺",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "中立",
+      "试探",
+      "骗技能",
+      "节奏"
+    ],
+    "content": "中立回合的目标不是立刻打满伤害，而是用走位、通灵、秘卷或低风险技能换取对手关键资源，再进入更确定的进攻回合。"
+  },
+  {
+    "id": "mechanic_pressure_001",
+    "title": "压场与撤退",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "压场",
+      "墙角",
+      "撤退",
+      "反压",
+      "资源"
+    ],
+    "content": "压场要建立在技能、替身、通灵或位置优势上。资源不足时继续压场，容易从进攻方变成被反打方。"
+  },
+  {
+    "id": "mechanic_ultimate_001",
+    "title": "奥义点管理",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "奥义",
+      "大招",
+      "奥义点",
+      "收尾",
+      "资源"
+    ],
+    "content": "奥义是高价值资源。更稳的使用方式是用于确认收尾、惩罚大后摇、或在对手替身不可用时扩大收益。"
+  },
+  {
+    "id": "mechanic_summon_001",
+    "title": "通灵用于保护节奏",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "通灵",
+      "保护",
+      "反打",
+      "节奏"
+    ],
+    "content": "通灵不只用于起手，也可以用于保护关键技能真空期、打断对手反压、或在替身后建立安全距离。"
+  },
+  {
+    "id": "mechanic_secret_scroll_001",
+    "title": "秘卷的回合价值",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "秘卷",
+      "起手",
+      "防守",
+      "控场"
+    ],
+    "content": "秘卷应服务于当前忍者的短板。缺起手就用来创造起手机会，怕被压就用来防守和重置，不要无目的地开局乱交。"
+  },
+  {
+    "id": "mechanic_bait_sub_001",
+    "title": "骗替身",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "骗替",
+      "替身",
+      "连招",
+      "节奏"
+    ],
+    "content": "骗替身的核心是让对手以为你要继续稳定连段，实际保留后续资源，准备抓替身后的落点或反应。"
+  },
+  {
+    "id": "mechanic_corner_001",
+    "title": "墙角收益",
+    "level": "intermediate",
+    "category": "mechanic",
+    "tags": [
+      "墙角",
+      "压场",
+      "连招",
+      "走位"
+    ],
+    "content": "墙角能限制对手位移和走位，但只有在自己有资源继续压制时才是优势。没技能时站太近反而容易被反打。"
+  },
+  {
+    "id": "mechanic_start_001",
+    "title": "开局不要固定套路",
+    "level": "beginner",
+    "category": "mechanic",
+    "tags": [
+      "开局",
+      "起手",
+      "习惯",
+      "预判"
+    ],
+    "content": "开局如果每次都用同一个技能或路线，会很快被对手预判。可以在前两秒先观察对手起手习惯，再决定抢先手还是拉扯。"
+  },
+  {
+    "id": "mistake_skill_whiff_001",
+    "title": "无保护技能空放",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "技能空放",
+      "空放",
+      "前压",
+      "后摇",
+      "反打"
+    ],
+    "symptom": "玩家在对手可反打距离内释放技能但未命中。",
+    "risk": "进入技能真空期，被对手抓后摇或反压。",
+    "content": "如果技能没有命中，第一优先级是重置距离。继续前压通常是在用无资源状态和对手交换，风险偏高。"
+  },
+  {
+    "id": "mistake_substitution_early_001",
+    "title": "低收益命中后过早替身",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "替身",
+      "资源",
+      "低收益"
+    ],
+    "symptom": "对手只是试探命中，玩家立刻交替身。",
+    "risk": "后续高伤害回合没有替身，容易被稳定压制。",
+    "content": "替身要看对方能否继续稳定收益，以及自己替身后是否能反打或逃生。没有收益的替身只是提前交资源。"
+  },
+  {
+    "id": "mistake_ultimate_low_confirm_001",
+    "title": "奥义没有命中确认",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": [
+      "奥义",
+      "大招",
+      "确认",
+      "收尾",
+      "资源"
+    ],
+    "symptom": "玩家在对手仍有规避空间时直接释放奥义。",
+    "risk": "高资源换低收益，丢失后续压制机会。",
+    "content": "奥义更适合在命中确认、对手替身不可用、或位置被限制时使用。抢收尾失败往往会直接丢掉节奏。"
+  },
+  {
+    "id": "mistake_start_rush_001",
+    "title": "开局无信息硬抢",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "开局",
+      "起手",
+      "硬抢",
+      "预判"
+    ],
+    "symptom": "每局开局都立刻用同一个起手技能。",
+    "risk": "被对手提前预判，开局直接进入劣势。",
+    "content": "开局硬抢不是不能用，但如果形成固定习惯，就会被对手反制。更稳的做法是先看对手路线和技能习惯。"
+  },
+  {
+    "id": "mistake_no_bait_sub_001",
+    "title": "不会骗替身",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": [
+      "骗替",
+      "替身",
+      "连招",
+      "追击"
+    ],
+    "symptom": "每次命中都按固定连招打到底。",
+    "risk": "对手很容易在固定点替身反打。",
+    "content": "对手替身还在时，不要只想着打满伤害。可以在连段中留技能、停顿、走位，准备抓替身后的动作。"
+  },
+  {
+    "id": "mistake_over_pressure_001",
+    "title": "资源不足仍然压场",
+    "level": "intermediate",
+    "category": "mistake",
+    "tags": [
+      "压场",
+      "资源",
+      "墙角",
+      "反压"
+    ],
+    "symptom": "技能、秘卷或通灵都不占优时仍站在对手脸上。",
+    "risk": "被对手抓到技能真空期，压场变成送节奏。",
+    "content": "压场要看自己手里还有什么。没有资源时，压场动作应更短，优先保位置而不是强行起手。"
+  },
+  {
+    "id": "mistake_panic_defense_001",
+    "title": "防守时连续乱交资源",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "防守",
+      "替身",
+      "通灵",
+      "秘卷",
+      "紧张"
+    ],
+    "symptom": "被压后连续交替身、通灵或秘卷，但没有形成反打。",
+    "risk": "短时间交完所有防守资源，下一波更难处理。",
+    "content": "防守资源要一层一层用。每交一个资源，都要知道目标是逃生、反打还是拖冷却。"
+  },
+  {
+    "id": "mistake_bad_distance_001",
+    "title": "站在对手强势距离里犹豫",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "距离",
+      "走位",
+      "犹豫",
+      "起手"
+    ],
+    "symptom": "玩家停在对手技能刚好能命中的位置，没有主动拉开或压进。",
+    "risk": "让对手用最舒服的距离先手。",
+    "content": "站位要么退到对手打不到，要么压到能干扰对手释放。停在对手强势距离中间最容易被白打。"
+  },
+  {
+    "id": "mistake_no_review_target_001",
+    "title": "一局想改太多问题",
+    "level": "beginner",
+    "category": "mistake",
+    "tags": [
+      "训练",
+      "复盘",
+      "目标",
+      "作业"
+    ],
+    "symptom": "复盘后同时想练起手、替身、连招、走位。",
+    "risk": "注意力被分散，下一局仍然靠习惯打。",
+    "content": "每次复盘只选一个最影响胜负的问题。先让一个动作变稳定，再追加下一项训练。"
+  },
+  {
+    "id": "training_skill_reset_001",
+    "title": "技能空放后撤训练",
+    "targetLevel": "beginner",
+    "tags": [
+      "技能空放",
+      "空放",
+      "后撤",
+      "拉扯"
+    ],
+    "content": "接下来 5 局只练一个动作：关键技能没有命中时，立刻后撤或重置距离，不追加第二个关键技能。通过标准：至少 3 局能明显减少无保护前压。",
+    "category": "training"
+  },
+  {
+    "id": "training_substitution_log_001",
+    "title": "替身原因记录",
+    "targetLevel": "beginner",
+    "tags": [
+      "替身",
+      "复盘",
+      "资源"
+    ],
+    "content": "接下来 5 局记录每一次替身的原因：是逃生、反打、打断高收益，还是只是紧张。通过标准：低收益命中后立刻替身的次数下降。",
+    "category": "training"
+  },
+  {
+    "id": "training_confirm_001",
+    "title": "命中确认专项",
+    "targetLevel": "intermediate",
+    "tags": [
+      "确认",
+      "命中确认",
+      "追击",
+      "奥义"
+    ],
+    "content": "接下来 5 局只统计关键资源是否建立在命中确认上。通过标准：奥义和关键追击的空放次数下降。",
+    "category": "training"
+  },
+  {
+    "id": "training_opening_001",
+    "title": "开局观察训练",
+    "targetLevel": "beginner",
+    "tags": [
+      "开局",
+      "观察",
+      "起手"
+    ],
+    "content": "接下来 5 局开局前 2 秒不主动交关键技能，只观察对手是前压、后撤还是直接起手。通过标准：开局被反打次数下降。",
+    "category": "training"
+  },
+  {
+    "id": "training_distance_001",
+    "title": "危险距离标记",
+    "targetLevel": "beginner",
+    "tags": [
+      "距离",
+      "走位",
+      "拉扯"
+    ],
+    "content": "接下来 5 局每次被起手后回想自己站在什么距离。通过标准：能说出对手最常命中的距离，并主动避开。",
+    "category": "training"
+  },
+  {
+    "id": "training_bait_sub_001",
+    "title": "骗替身专项",
+    "targetLevel": "intermediate",
+    "tags": [
+      "骗替",
+      "替身",
+      "连招"
+    ],
+    "content": "接下来 5 局只练一次命中后的停顿或留技能，不强求打满。通过标准：至少 2 次让对手替身后没有稳定反打。",
+    "category": "training"
+  },
+  {
+    "id": "training_defense_layer_001",
+    "title": "防守资源分层",
+    "targetLevel": "beginner",
+    "tags": [
+      "防守",
+      "替身",
+      "通灵",
+      "秘卷"
+    ],
+    "content": "接下来 5 局被压时禁止连续交两个防守资源。每次只交一个，并记录它换来了什么。通过标准：防守资源乱交次数下降。",
+    "category": "training"
+  },
+  {
+    "id": "training_pressure_001",
+    "title": "压场前资源检查",
+    "targetLevel": "intermediate",
+    "tags": [
+      "压场",
+      "资源",
+      "墙角"
+    ],
+    "content": "接下来 5 局每次压场前问自己：我还有技能、秘卷、通灵或替身吗？通过标准：资源不足贴脸次数下降。",
+    "category": "training"
+  },
+  {
+    "id": "training_review_one_001",
+    "title": "单点复盘",
+    "targetLevel": "beginner",
+    "tags": [
+      "复盘",
+      "目标",
+      "作业"
+    ],
+    "content": "每局只复盘一个问题，不同时改三件事。通过标准：复盘结论能浓缩成一句下一局提醒。",
+    "category": "training"
+  }
+]

@@ -39,6 +39,36 @@
             最近怕打的忍者
             <input id="profile-enemy" value="漩涡鸣人" />
           </label>
+          <label>
+            我方替身状态
+            <select id="profile-player-sub">
+              <option value="">未填写</option>
+              <option value="我方替身可用">可用</option>
+              <option value="我方替身不可用">不可用</option>
+              <option value="我方替身冷却中">冷却中</option>
+            </select>
+          </label>
+          <label>
+            对方替身状态
+            <select id="profile-enemy-sub">
+              <option value="">未填写</option>
+              <option value="对方替身可用">可用</option>
+              <option value="对方替身不可用">不可用</option>
+              <option value="对方替身冷却中">冷却中</option>
+            </select>
+          </label>
+          <label>
+            我方秘卷
+            <input id="profile-secret" placeholder="例如：霸体、散、风杀阵" />
+          </label>
+          <label>
+            我方通灵
+            <input id="profile-summon" placeholder="例如：蛤蟆、猿魔、熊猫" />
+          </label>
+          <label class="wide-field">
+            当前战况
+            <textarea id="profile-situation" rows="3" placeholder="例如：开局技能空了，对面还有替身，我被压到墙角。"></textarea>
+          </label>
         </section>
 
         <section class="settings-section">
@@ -65,7 +95,7 @@
             <button id="save-provider" class="secondary" type="button">保存</button>
             <button id="test-provider" class="secondary" type="button">测试</button>
           </div>
-          <p id="provider-status">必须填写硅基流动 API key 后才可以使用教练。</p>
+          <p id="provider-status">设置只保存在当前浏览器。</p>
         </section>
       </aside>
 
@@ -73,7 +103,7 @@
         <header class="chat-header">
           <div>
             <h1>决斗场 AI 教练</h1>
-            <p>告诉我你遇到的局面，我会按你的信息给出下一局能执行的建议。</p>
+            <p>教练会先检索本地知识库，再生成并审查回答；没有依据时会追问，不会硬编具体技能机制。</p>
           </div>
         </header>
 

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "matchup_decision_template_001",
+    "title": "具体对局优秀决策模板",
+    "template": true,
+    "playerNinja": "我方忍者",
+    "enemyNinja": "对手忍者",
+    "level": "intermediate",
+    "tags": ["模板", "对局", "决策"],
+    "summary": "填写这组对局的关键距离、不能乱交的资源、推荐争夺节奏、优势交换和劣势处理。"
+  },
+  {
+    "id": "matchup_sasuke_vs_naruto_001",
+    "title": "宇智波佐助打漩涡鸣人",
+    "playerNinja": "宇智波佐助",
+    "enemyNinja": "漩涡鸣人",
+    "level": "beginner",
+    "tags": ["佐助", "鸣人", "距离", "技能空放"],
+    "summary": "演示对局：佐助应避免在技能空后继续站近，鸣人类对手容易抓近身混乱。优先中距离试探和后撤重置。",
+    "category": "matchup_decision"
+  },
+  {
+    "id": "matchup_naruto_vs_sasuke_001",
+    "title": "漩涡鸣人打宇智波佐助",
+    "playerNinja": "漩涡鸣人",
+    "enemyNinja": "宇智波佐助",
+    "level": "beginner",
+    "tags": ["鸣人", "佐助", "起手", "替身"],
+    "summary": "演示对局：鸣人命中后要先确认佐助替身状态，对手替身在时不要固定连招打到底。",
+    "category": "matchup_decision"
+  },
+  {
+    "id": "matchup_itachi_vs_obito_001",
+    "title": "宇智波鼬打宇智波带土",
+    "playerNinja": "宇智波鼬",
+    "enemyNinja": "宇智波带土",
+    "level": "advanced",
+    "tags": ["鼬", "带土", "控场", "落点"],
+    "summary": "演示对局：鼬要优先限制带土落点，别在带土替身或位移资源完整时强行收尾。",
+    "category": "matchup_decision"
+  },
+  {
+    "id": "matchup_minato_vs_gaara_001",
+    "title": "波风水门打我爱罗",
+    "playerNinja": "波风水门",
+    "enemyNinja": "我爱罗",
+    "level": "advanced",
+    "tags": ["水门", "我爱罗", "机动", "骗技能"],
+    "summary": "演示对局：水门应利用机动骗出控场资源，避免在我爱罗资源完整时直线硬进。",
+    "category": "matchup_decision"
+  }
+]

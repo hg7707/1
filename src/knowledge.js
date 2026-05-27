@@ -8,11 +8,13 @@ const root = path.resolve(__dirname, "..");
 const knowledgeDir = path.join(root, "knowledge");
 
 const files = {
-  mechanics: "mechanics.json",
-  mistakes: "mistakes.json",
-  trainings: "trainings.json",
-  ninjas: "ninjas.json",
-  matchups: "matchups.json"
+  ninja_basics: "ninja_basics.json",
+  ninja_playstyles: "ninja_playstyles.json",
+  ninja_tips: "ninja_tips.json",
+  duel_logic: "duel_logic.json",
+  matchup_decisions: "matchup_decisions.json",
+  matchmaking: "matchmaking.json",
+  rank_recommendations: "rank_recommendations.json"
 };
 
 export async function loadKnowledgeBase() {

@@ -65,8 +65,21 @@ app.post("/api/chat", apiLimiter, async (req, res, next) => {
         rank: playerProfile.rank,
         playerNinja: playerProfile.playerNinja,
         enemyNinja: playerProfile.enemyNinja,
+        playerSubstitution: playerProfile.playerSubstitution,
+        enemySubstitution: playerProfile.enemySubstitution,
+        playerSecret: playerProfile.playerSecret,
+        playerSummon: playerProfile.playerSummon,
+        battleSituation: playerProfile.battleSituation,
         result: "",
-        selfDiagnosis: `${messages.filter((m) => m.role === "user").slice(-4).map((m) => m.content).join(" ")} ${latest}`.trim(),
+        selfDiagnosis: [
+          messages.filter((m) => m.role === "user").slice(-4).map((m) => m.content).join(" "),
+          playerProfile.playerSubstitution,
+          playerProfile.enemySubstitution,
+          playerProfile.playerSecret,
+          playerProfile.playerSummon,
+          playerProfile.battleSituation,
+          latest
+        ].join(" ").trim(),
         keyMoments: [{ time: "chat", description: latest }]
       },
       await loadKnowledgeBase()
@@ -155,7 +168,12 @@ function normalizePlayerProfile(profile = {}) {
     level: clean(profile.level || "intermediate"),
     rank: clean(profile.rank),
     playerNinja: clean(profile.playerNinja),
-    enemyNinja: clean(profile.enemyNinja)
+    enemyNinja: clean(profile.enemyNinja),
+    playerSubstitution: clean(profile.playerSubstitution),
+    enemySubstitution: clean(profile.enemySubstitution),
+    playerSecret: clean(profile.playerSecret).slice(0, 40),
+    playerSummon: clean(profile.playerSummon).slice(0, 40),
+    battleSituation: clean(profile.battleSituation).slice(0, 300)
   };
 }
 
