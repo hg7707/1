@@ -31,6 +31,10 @@ export async function createAiChatResponse({ messages, playerProfile, retrieved 
 
 export async function createSiliconFlowChatResponse({ messages, playerProfile, retrieved, apiConfig }) {
   const context = buildChatInput({ messages, playerProfile, retrieved });
+  if (shouldAnswerFromKnowledgeDirectly(context)) {
+    return buildDirectKnowledgeReply(context);
+  }
+
   if (shouldUseSafeFallback(context)) {
     return buildSafeFallbackReply(context);
   }
@@ -359,6 +363,87 @@ function shouldUseSafeFallback(context) {
   if (!latestQuestion) return true;
   const asksSpecificMechanic = /技能|机制|冷却|帧|伤害|连招|秘卷|通灵|霸体|无敌|抓取|扫地|版本|强度|克制|怎么打/.test(latestQuestion);
   return !context.coverage.hasStrongEvidence && asksSpecificMechanic;
+}
+
+function shouldAnswerFromKnowledgeDirectly(context) {
+  const latestQuestion = normalizeText(context.latestQuestion);
+  if (!latestQuestion || !context.coverage.hasNinjaSpecificEvidence) return false;
+  return /机制介绍|玩法介绍|技能介绍|忍者介绍|基础介绍|怎么玩|连招|秘卷|通灵|强度|上分/.test(latestQuestion);
+}
+
+function buildDirectKnowledgeReply(context) {
+  const evidence = [
+    ...(context.retrievedKnowledge.strongEvidence || []),
+    ...(context.retrievedKnowledge.supportEvidence || [])
+  ].filter((item) =>
+    ["ninja_basics", "ninja_playstyles", "ninja_tips", "rank_recommendations"].includes(item.sourceType)
+  );
+  const primary = evidence[0];
+  const basics = evidence.filter((item) => item.sourceType === "ninja_basics").slice(0, 2);
+  const playstyles = evidence.filter((item) => item.sourceType === "ninja_playstyles").slice(0, 1);
+  const tips = evidence.filter((item) => item.sourceType === "ninja_tips").slice(0, 2);
+  const rank = evidence.find((item) => item.sourceType === "rank_recommendations");
+  const cited = [...basics, ...playstyles, ...tips, ...(rank ? [rank] : [])]
+    .filter(Boolean)
+    .filter((item, index, items) => items.findIndex((candidate) => candidate.title === item.title) === index)
+    .slice(0, 5);
+
+  return [
+    "【结论】",
+    `知识库已经命中“${primary?.title || "相关忍者资料"}”，可以回答这类基础机制问题。下面只按知识库内容整理，不补编未命中的细节。`,
+    "",
+    "【依据】",
+    ...cited.slice(0, 4).map((item) => `知识库命中：${item.title}`),
+    "",
+    "【机制介绍】",
+    ...formatEvidenceLines([...basics, ...playstyles], 4),
+    "",
+    "【使用要点】",
+    ...formatEvidenceLines(tips.length ? tips : playstyles, 3),
+    "",
+    "【下一局怎么打】",
+    ...buildActionLines(cited),
+    "",
+    "【不确定/需要补充】",
+    rank
+      ? "强度和上分定位属于版本相关信息，后续版本更新后需要复核。"
+      : "如果要判断具体对局，还需要补充对面忍者、双方替身状态和这一波发生的位置。",
+    "",
+    "【训练作业】",
+    "接下来 5 局只练一个点：每次进攻前先确认自己是用普攻、技能还是苦无位移起手，并记录哪种方式最容易被反打。"
+  ].join("\n");
+}
+
+function formatEvidenceLines(items, maxLines) {
+  const lines = [];
+  for (const item of items) {
+    const chunks = splitSentences(item.content || item.summary || "");
+    for (const chunk of chunks) {
+      if (lines.length >= maxLines) return lines;
+      lines.push(`${lines.length + 1}. ${chunk}`);
+    }
+  }
+  return lines.length ? lines : ["1. 当前命中的知识条目内容较短，建议继续补充更细的普攻、技能和连招资料。"];
+}
+
+function buildActionLines(items) {
+  const text = items.map((item) => `${item.title} ${item.content}`).join("\n");
+  const actions = [];
+  if (/3A|4A|印记|苦无/.test(text)) actions.push("1. 起手后优先确认印记和苦无位置，不要无脑打满普攻。");
+  if (/替身/.test(text)) actions.push(`${actions.length + 1}. 对手替身还在时，先保留一个位移或技能资源，别一次性交完。`);
+  if (/秘卷|通灵/.test(text)) actions.push(`${actions.length + 1}. 秘卷和通灵按控制、保命、补起手三个目的选择，不要只看伤害。`);
+  if (!actions.length) actions.push("1. 先按知识库里的核心机制建立起手、追击、收尾三段流程。");
+  return actions.slice(0, 3);
+}
+
+function splitSentences(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .split(/(?<=[。！？；])|(?<=\.)\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => (part.length > 120 ? `${part.slice(0, 118)}...` : part))
+    .slice(0, 8);
 }
 
 function auditCoachAnswerLocally(answer, context) {
