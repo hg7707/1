@@ -29,8 +29,8 @@ export async function createAiChatResponse({ messages, playerProfile, retrieved 
   return response.output_text || "我现在没有生成有效回答。请补充你用的忍者、对面忍者、输在哪个回合，以及当时替身和技能是否可用。";
 }
 
-export async function createSiliconFlowChatResponse({ messages, playerProfile, retrieved, apiConfig }) {
-  const context = buildChatInput({ messages, playerProfile, retrieved });
+export async function createSiliconFlowChatResponse({ messages, playerProfile, retrieved, webSearch, apiConfig }) {
+  const context = buildChatInput({ messages, playerProfile, retrieved, webSearch });
   if (shouldAnswerFromKnowledgeDirectly(context)) {
     return buildDirectKnowledgeReply(context);
   }
@@ -42,7 +42,7 @@ export async function createSiliconFlowChatResponse({ messages, playerProfile, r
   const draft = await createSiliconFlowCompletion({
     apiConfig,
     messages: [
-      { role: "system", content: buildCoachInstructions() },
+      { role: "system", content: buildCoachInstructions(context) },
       { role: "user", content: JSON.stringify(context, null, 2) }
     ],
     maxTokens: 1400,
@@ -59,7 +59,7 @@ export async function createSiliconFlowChatResponse({ messages, playerProfile, r
   const rewritten = await createSiliconFlowCompletion({
     apiConfig,
     messages: [
-      { role: "system", content: buildCoachInstructions() },
+      { role: "system", content: buildCoachInstructions(context) },
       {
         role: "user",
         content: JSON.stringify(
@@ -178,7 +178,7 @@ async function auditCoachAnswer({ apiConfig, answer, context }) {
       {
         role: "system",
         content:
-          "你是严格的事实审查器。只判断回答是否被输入的 retrievedKnowledge、用户信息或通用决斗场原则支持。禁止补充新游戏知识。只输出 JSON。"
+          "你是严格的事实审查器。只判断回答是否被输入的 retrievedKnowledge、webSearch.results、用户信息或通用决斗场原则支持。禁止补充新游戏知识。只输出 JSON。"
       },
       {
         role: "user",
@@ -189,8 +189,8 @@ async function auditCoachAnswer({ apiConfig, answer, context }) {
               "如果把不确定内容说成确定事实，pass=false。",
               "如果没有足够信息却没有追问，pass=false。",
               "通用原则可以通过，但必须标记为通用建议。",
-              "如果回答引用了不在 evidenceTitles 中的知识库标题，pass=false。",
-              "如果 coverage.hasStrongEvidence=false 仍给具体忍者或 matchup 结论，pass=false。"
+              "如果回答引用了不在 evidenceTitles 中的知识库标题或联网检索标题，pass=false。",
+              "如果 coverage.hasStrongEvidence=false 且 coverage.hasWebEvidence=false 仍给具体忍者或 matchup 结论，pass=false。"
             ],
             evidenceTitles: getEvidenceTitles(context),
             context,
@@ -214,12 +214,16 @@ async function auditCoachAnswer({ apiConfig, answer, context }) {
   };
 }
 
-function buildChatInput({ messages, playerProfile, retrieved }) {
+function buildChatInput({ messages, playerProfile, retrieved, webSearch = { query: "", results: [], error: "" } }) {
   const latestQuestion = messages.at(-1)?.content || "";
   const strongEvidence = retrieved.filter((item) => item.score >= 20).slice(0, 8);
   const supportEvidence = retrieved.filter((item) => item.score < 20).slice(0, 6);
   const missingFields = getMissingBattleFields(playerProfile);
-  const evidenceTitles = [...strongEvidence, ...supportEvidence].map((item) => item.title);
+  const webResults = Array.isArray(webSearch?.results) ? webSearch.results.slice(0, 4) : [];
+  const evidenceTitles = [
+    ...[...strongEvidence, ...supportEvidence].map((item) => item.title),
+    ...webResults.map((item) => `联网检索：${item.title}`)
+  ];
 
   return {
     task: "基于知识库做火影忍者手游决斗场教练回复",
@@ -246,8 +250,19 @@ function buildChatInput({ messages, playerProfile, retrieved }) {
       strongEvidence,
       supportEvidence
     },
+    webSearch: {
+      enabled: Boolean(webSearch?.query),
+      query: webSearch?.query || "",
+      results: webResults,
+      error: webSearch?.error || "",
+      instruction:
+        webResults.length > 0
+          ? "Local knowledge was insufficient, so these web results may be used as secondary evidence. Cite them as 联网检索：title and avoid overclaiming."
+          : "No web evidence is available."
+    },
     coverage: {
       hasStrongEvidence: strongEvidence.length > 0,
+      hasWebEvidence: webResults.length > 0,
       hasNinjaSpecificEvidence: strongEvidence.some((item) =>
         ["ninja_basics", "ninja_playstyles", "ninja_tips", "matchup_decisions"].includes(item.sourceType)
       ),
@@ -324,20 +339,31 @@ JSON 结构：
 `.trim();
 }
 
-function buildCoachInstructions() {
+function buildCoachInstructions(context = {}) {
+  const webPolicy = context.coverage?.hasWebEvidence
+    ? `
+
+联网检索补充规则：
+1. 本轮本地知识库强证据不足，但输入里提供了 webSearch.results。你可以把 webSearch.results 作为次级证据回答。
+2. 使用网页结果时，必须在【依据】里写“联网检索：网页标题”，不要写成“知识库命中”。
+3. 网页信息可能过期或不完整；对版本强度、伤害数值、冷却、帧数、削弱调整等内容必须标注“联网资料显示/需要复核”，不能写成绝对事实。
+4. 如果网页结果和本地知识库冲突，以本地知识库优先；如果只有网页结果，回答要更保守。
+5. 不要编造 webSearch.results 中没有出现的网页标题、链接或具体技能细节。
+`
+    : "";
   return `
 你是一个专门教玩家打《火影忍者手游》决斗场的中文 AI 教练。
 你的目标不是闲聊，而是像教练一样：判断问题、纠错、给下一局可执行训练。
 
 最高优先级规则：
-1. 只能把 retrievedKnowledge、用户输入和通用决斗场原则作为依据。
+1. 只能把 retrievedKnowledge、webSearch.results、用户输入和通用决斗场原则作为依据。
 2. 如果知识库没有覆盖具体忍者、技能、版本强度、连招、秘卷或通灵效果，必须说明“不确定/当前知识库没有依据”，不能编造。
-3. 具体技能机制、霸体、无敌、抓取、扫地、帧数、数值、版本强度，只有在 retrievedKnowledge 明确写出时才能说。
+3. 具体技能机制、霸体、无敌、抓取、扫地、帧数、数值、版本强度，只有在 retrievedKnowledge 或 webSearch.results 明确写出时才能说；仅来自网页时必须标注需要复核。
 4. 用户信息不足时，先给一个通用初判，然后只追问 1 个最关键问题。
 5. 禁止“必胜”“绝对克制”“无脑打”“最强”等过度确定表达。
 6. 高风险结论要标明“基于你当前描述的判断”。
-7. 【依据】里只能写输入中 evidenceTitles 存在的标题，或写“通用决斗场原则”。不能自己发明知识库标题。
-8. coverage.hasStrongEvidence=false 时，不允许给具体忍者对局结论，只能给通用处理和追问。
+7. 【依据】里只能写输入中 evidenceTitles 存在的标题，或写“通用决斗场原则”。不能自己发明知识库或网页标题。
+8. coverage.hasStrongEvidence=false 且 coverage.hasWebEvidence=false 时，不允许给具体忍者对局结论，只能给通用处理和追问。
 9. 不要输出技能冷却时间、伤害比例、帧数、霸体/无敌/抓取/扫地效果，除非 retrievedKnowledge 原文明确提供。
 
 回复格式：
@@ -345,7 +371,7 @@ function buildCoachInstructions() {
 用 1-2 句说明最可能的问题。证据不足时要直接说证据不足。
 
 【依据】
-列 1-3 条依据。只能写“知识库命中：标题”或“通用决斗场原则”，不要暴露 id。
+列 1-3 条依据。只能写“知识库命中：标题”“联网检索：标题”或“通用决斗场原则”，不要暴露 id。
 
 【下一局怎么打】
 给 2-4 条具体动作建议。每条都要可执行。
@@ -355,12 +381,13 @@ function buildCoachInstructions() {
 
 【训练作业】
 给一个 5 局以内能验证的训练任务。
-`.trim();
+${webPolicy}`.trim();
 }
 
 function shouldUseSafeFallback(context) {
   const latestQuestion = normalizeText(context.latestQuestion);
   if (!latestQuestion) return true;
+  if (context.coverage?.hasWebEvidence) return false;
   const asksSpecificMechanic = /技能|机制|冷却|帧|伤害|连招|秘卷|通灵|霸体|无敌|抓取|扫地|版本|强度|克制|怎么打/.test(latestQuestion);
   return !context.coverage.hasStrongEvidence && asksSpecificMechanic;
 }
@@ -473,7 +500,7 @@ function auditCoachAnswerLocally(answer, context) {
     issues.push(`引用了不存在的知识库标题：${fabricatedCitations.join("、")}`);
   }
 
-  if (!context.coverage.hasStrongEvidence && /打.+建议|克制|对局|具体打法|技能机制/.test(text) && !text.includes("通用")) {
+  if (!context.coverage.hasStrongEvidence && !context.coverage.hasWebEvidence && /打.+建议|克制|对局|具体打法|技能机制/.test(text) && !text.includes("通用")) {
     issues.push("强证据不足时给出了具体对局结论");
   }
 
@@ -491,10 +518,11 @@ function isSupportedByEvidence(pattern, context) {
     context.playerProfile?.playerSummon,
     context.playerProfile?.battleSituation,
     ...(context.retrievedKnowledge.strongEvidence || []),
-    ...(context.retrievedKnowledge.supportEvidence || [])
+    ...(context.retrievedKnowledge.supportEvidence || []),
+    ...(context.webSearch?.results || [])
   ]
     .map((item) =>
-      typeof item === "string" ? item : `${item.title} ${item.content} ${(item.tags || []).join(" ")}`
+      typeof item === "string" ? item : `${item.title} ${item.content || item.snippet || ""} ${(item.tags || []).join(" ")} ${item.url || ""}`
     )
     .join("\n");
 
@@ -525,7 +553,8 @@ function getMissingBattleFields(playerProfile = {}) {
 function getEvidenceTitles(context) {
   return [
     ...(context.retrievedKnowledge?.strongEvidence || []),
-    ...(context.retrievedKnowledge?.supportEvidence || [])
+    ...(context.retrievedKnowledge?.supportEvidence || []),
+    ...(context.webSearch?.results || []).map((item) => ({ title: `联网检索：${item.title}` }))
   ].map((item) => item.title);
 }
 

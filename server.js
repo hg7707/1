@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { loadKnowledgeBase } from "./src/knowledge.js";
 import { retrieveKnowledge } from "./src/retriever.js";
 import { createSiliconFlowChatResponse, createSiliconFlowReport, testSiliconFlowConnection } from "./src/ai.js";
+import { searchWebForCoach, shouldSearchWeb } from "./src/webSearch.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -84,8 +85,15 @@ app.post("/api/chat", apiLimiter, async (req, res, next) => {
       },
       await loadKnowledgeBase()
     );
-    const reply = await createSiliconFlowChatResponse({ messages, playerProfile, retrieved, apiConfig });
-    res.json({ provider: "siliconflow", reply, evidence: toEvidence(retrieved), retrieved });
+    const webSearch = shouldSearchWeb({
+      latestQuestion: latest,
+      retrieved,
+      webSearchEnabled: process.env.WEB_SEARCH_ENABLED !== "false"
+    })
+      ? await searchWebForCoach({ latestQuestion: latest, playerProfile })
+      : { query: "", results: [], error: "" };
+    const reply = await createSiliconFlowChatResponse({ messages, playerProfile, retrieved, webSearch, apiConfig });
+    res.json({ provider: "siliconflow", reply, evidence: toEvidence(retrieved), webSearch, retrieved });
   } catch (error) {
     next(error);
   }

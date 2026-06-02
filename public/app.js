@@ -4,6 +4,10 @@ const chatInput = document.querySelector("#chat-input");
 const chatSubmit = document.querySelector("#chat-submit");
 const chatMessages = document.querySelector("#chat-messages");
 const chatSamples = document.querySelectorAll(".chat-sample");
+const settingsPanel = document.querySelector("#settings-panel");
+const settingsToggle = document.querySelector("#settings-toggle");
+const settingsBackdrop = document.querySelector("#settings-backdrop");
+const settingsClose = document.querySelector(".settings-close");
 const siliconflowKey = document.querySelector("#siliconflow-key");
 const siliconflowModel = document.querySelector("#siliconflow-model");
 const siliconflowBaseUrl = document.querySelector("#siliconflow-base-url");
@@ -55,6 +59,24 @@ chatSamples.forEach((button) => {
     resizeComposer();
     chatInput.focus();
   });
+});
+
+settingsToggle.addEventListener("click", () => {
+  setSettingsOpen(!document.body.classList.contains("settings-open"));
+});
+
+settingsClose.addEventListener("click", () => {
+  setSettingsOpen(false);
+});
+
+settingsBackdrop.addEventListener("click", () => {
+  setSettingsOpen(false);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.body.classList.contains("settings-open")) {
+    setSettingsOpen(false);
+  }
 });
 
 saveProvider.addEventListener("click", () => {
@@ -178,6 +200,18 @@ function updateHealthText() {
 
 function hasApiKey() {
   return Boolean(normalizeApiKey(siliconflowKey.value));
+}
+
+function setSettingsOpen(open) {
+  document.body.classList.toggle("settings-open", open);
+  settingsToggle.setAttribute("aria-expanded", String(open));
+  settingsPanel.setAttribute("aria-hidden", String(!open));
+  settingsBackdrop.hidden = !open;
+  if (open) {
+    settingsPanel.querySelector("input, select, textarea, button")?.focus({ preventScroll: true });
+  } else {
+    settingsToggle.focus({ preventScroll: true });
+  }
 }
 
 function collectPlayerProfile() {

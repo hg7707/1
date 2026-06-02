@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check src/knowledge.js && node --check src/retriever.js && node --check src/report.js && node --check src/ai.js && node --check src/chat.js && node --check public/app.js && node scripts/reliability-check.js",
+    "check": "node --check server.js && node --check src/knowledge.js && node --check src/retriever.js && node --check src/webSearch.js && node --check src/report.js && node --check src/ai.js && node --check src/chat.js && node --check public/app.js && node scripts/reliability-check.js && node scripts/web-search-check.js",
     "reliability": "node scripts/reliability-check.js"
   },
   "engines": {

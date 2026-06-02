@@ -7,10 +7,21 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <button
+      id="settings-toggle"
+      class="settings-toggle"
+      type="button"
+      aria-label="显示基本信息和 API 设置"
+      aria-controls="settings-panel"
+      aria-expanded="false"
+    >
+      忍
+    </button>
+    <div id="settings-backdrop" class="settings-backdrop" hidden></div>
     <div class="app">
-      <aside class="settings">
+      <aside id="settings-panel" class="settings" aria-hidden="true">
         <div class="brand">
-          <div class="mark">忍</div>
+          <button class="mark settings-close" type="button" aria-label="隐藏基本信息和 API 设置">忍</button>
           <div>
             <strong>决斗场教练</strong>
             <span id="health">检查中</span>
