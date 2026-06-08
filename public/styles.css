@@ -10,6 +10,7 @@
   --danger: #d92d20;
   --radius: 12px;
   --sidebar-width: 312px;
+  --app-height: 100dvh;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -44,6 +45,7 @@ button {
 
 .app {
   min-height: 100vh;
+  min-height: var(--app-height);
 }
 
 .settings-toggle {
@@ -86,7 +88,7 @@ button {
   flex-direction: column;
   gap: 22px;
   width: min(var(--sidebar-width), calc(100vw - 18px));
-  height: 100dvh;
+  height: var(--app-height);
   overflow: auto;
   border-right: 1px solid var(--border);
   padding: 18px;
@@ -239,7 +241,8 @@ textarea:focus {
 .chat-shell {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
-  height: 100dvh;
+  height: var(--app-height);
+  min-height: 0;
   background: var(--bg);
 }
 
@@ -275,6 +278,7 @@ textarea:focus {
   flex-direction: column;
   gap: 0;
   overflow: auto;
+  min-height: 0;
   padding: 18px 0 24px;
   scroll-padding-bottom: 24px;
 }
@@ -386,6 +390,20 @@ textarea:focus {
 }
 
 @media (max-width: 860px) {
+  html,
+  body {
+    width: 100%;
+    height: var(--app-height);
+    min-height: var(--app-height);
+    overflow: hidden;
+  }
+
+  .app {
+    height: var(--app-height);
+    min-height: var(--app-height);
+    overflow: hidden;
+  }
+
   .settings {
     width: min(390px, calc(100vw - 16px));
   }
@@ -402,7 +420,24 @@ textarea:focus {
   }
 
   .chat-shell {
-    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    height: var(--app-height);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .chat-header,
+  .quick-actions,
+  .composer {
+    flex: 0 0 auto;
+  }
+
+  .chat-messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 10px;
   }
 }
 

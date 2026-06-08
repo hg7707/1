@@ -23,9 +23,15 @@ let chatHistory = [
   }
 ];
 
+syncAppHeight();
 boot();
 loadProviderConfig();
 renderChat();
+
+window.addEventListener("resize", syncAppHeight);
+window.addEventListener("orientationchange", syncAppHeight);
+window.visualViewport?.addEventListener("resize", syncAppHeight);
+window.visualViewport?.addEventListener("scroll", syncAppHeight);
 
 chatForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -247,8 +253,14 @@ function renderChat() {
 }
 
 function resizeComposer() {
+  syncAppHeight();
   chatInput.style.height = "auto";
   chatInput.style.height = `${Math.min(chatInput.scrollHeight, 180)}px`;
+}
+
+function syncAppHeight() {
+  const height = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight);
+  document.documentElement.style.setProperty("--app-height", `${height}px`);
 }
 
 function formatText(value) {
