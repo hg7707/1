@@ -12,6 +12,8 @@
   --sidebar-width: 312px;
   --app-height: 100dvh;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --header-control-left: max(12px, env(safe-area-inset-left, 0px));
+  --header-content-left: calc(var(--header-control-left) + 58px);
 }
 
 * {
@@ -52,7 +54,7 @@ button {
   position: fixed;
   z-index: 70;
   top: max(10px, env(safe-area-inset-top, 0px));
-  left: max(12px, env(safe-area-inset-left, 0px));
+  left: var(--header-control-left);
   display: grid;
   width: 40px;
   height: 40px;
@@ -253,16 +255,23 @@ textarea:focus {
   align-items: center;
   border-bottom: 1px solid var(--border);
   min-height: 64px;
-  padding: max(10px, env(safe-area-inset-top, 0px)) clamp(16px, 4vw, 44px) 10px calc(clamp(16px, 4vw, 44px) + 48px);
+  padding: max(10px, env(safe-area-inset-top, 0px)) clamp(16px, 4vw, 44px) 10px var(--header-content-left);
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
 }
 
+.chat-header > div {
+  min-width: 0;
+}
+
 .chat-header h1 {
   margin: 0;
+  overflow: hidden;
   font-size: 18px;
   line-height: 1.25;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat-header p {
@@ -442,6 +451,11 @@ textarea:focus {
 }
 
 @media (max-width: 620px) {
+  :root {
+    --header-control-left: max(12px, env(safe-area-inset-left, 0px));
+    --header-content-left: calc(var(--header-control-left) + 58px);
+  }
+
   .settings {
     padding: 14px;
   }
@@ -452,7 +466,7 @@ textarea:focus {
 
   .chat-header {
     min-height: 58px;
-    padding: max(9px, env(safe-area-inset-top, 0px)) 14px 9px 62px;
+    padding: max(9px, env(safe-area-inset-top, 0px)) 14px 9px var(--header-content-left);
   }
 
   .chat-header h1 {
@@ -510,13 +524,15 @@ textarea:focus {
 @media (orientation: landscape) and (max-height: 520px) {
   :root {
     --sidebar-width: 420px;
+    --header-control-left: max(14px, env(safe-area-inset-left, 0px));
+    --header-content-left: calc(var(--header-control-left) + 72px);
   }
 
   .settings-toggle {
     width: 36px;
     height: 36px;
     top: max(8px, env(safe-area-inset-top, 0px));
-    left: max(10px, env(safe-area-inset-left, 0px));
+    left: var(--header-control-left);
     border-radius: 10px;
   }
 
@@ -564,7 +580,7 @@ textarea:focus {
 
   .chat-header {
     min-height: 52px;
-    padding: max(8px, env(safe-area-inset-top, 0px)) 12px 8px 56px;
+    padding: max(8px, env(safe-area-inset-top, 0px)) 12px 8px var(--header-content-left);
   }
 
   .chat-header h1 {
